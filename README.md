@@ -2,8 +2,6 @@
 
 A beginner-friendly Python project to practice Git workflows, environment setup, and basic Python syntax.
 
-## 📁 Project Structure
-
 
 ## 🐍 Python Concepts Practiced
 
