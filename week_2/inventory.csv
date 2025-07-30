@@ -1,0 +1,6 @@
+product_id,product_name,quantity,price
+P001,Apple,50,1.25
+P002,Banana,5,0.5
+P003,Orange,ten,0.8
+P004,Grapes,-3,2.5
+P005,Mango,12,-1.0

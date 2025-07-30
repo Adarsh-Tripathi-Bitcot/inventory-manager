@@ -1,0 +1,3 @@
+Row 4: [{'type': 'int_parsing', 'loc': ('quantity',), 'msg': 'Input should be a valid integer, unable to parse string as an integer', 'input': 'ten', 'url': 'https://errors.pydantic.dev/2.11/v/int_parsing'}]
+Row 5: [{'type': 'greater_than_equal', 'loc': ('quantity',), 'msg': 'Input should be greater than or equal to 0', 'input': '-3', 'ctx': {'ge': 0}, 'url': 'https://errors.pydantic.dev/2.11/v/greater_than_equal'}]
+Row 6: [{'type': 'greater_than', 'loc': ('price',), 'msg': 'Input should be greater than 0', 'input': '-1.0', 'ctx': {'gt': 0.0}, 'url': 'https://errors.pydantic.dev/2.11/v/greater_than'}]
