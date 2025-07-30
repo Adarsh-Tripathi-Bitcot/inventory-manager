@@ -1,7 +1,8 @@
-# Inventory Manager
+# 📦 Inventory Manager
 
-A beginner-friendly Python project to practice Git workflows, environment setup, and basic Python syntax.
+A beginner-friendly Python project to practice Git workflows, environment setup, and core Python programming concepts, including data structures, procedural programming, error handling, and data validation using Pydantic.
 
+---
 
 ## 🐍 Python Concepts Practiced
 
@@ -9,16 +10,50 @@ A beginner-friendly Python project to practice Git workflows, environment setup,
 - The Zen of Python (`import this`)
 - List comprehensions vs. for loops
 - Equality (`==`) vs. identity (`is`)
-- Git branching: `main` → `develop` → `feature/initial-setup`
+- Git branching: `main` → `develop` → `feature/week_1`, `feature/week_2`
 - Pull Request (PR) workflow for team collaboration
 
-# 🧠 Week 2: Python Data Structures & Procedural Programming
+---
 
-## 📅 Overview
+## 📅 Overview Week - 2
 
 This week focused on mastering core Python data structures and procedural programming techniques, culminating in a real-world command-line tool to process inventory data from a CSV file.
 
 ---
+
+## 📂 Project Structure
+<pre> <code> ## 📂 Project Structure ```plaintext inventory-manager/ ├── .gitignore ├── README.md ├── week_1/ │ ├── f_principle.py │ ├── practice.py │ └── venv/ (not tracked) ├── week_2/ │ ├── control_flow.py │ ├── csv_utils.py │ ├── daily_drills.py │ ├── error_handling.py │ ├── errors.log │ ├── file_handling.py │ ├── function_utils.py │ ├── inventory.csv │ ├── items.csv │ ├── list_utils.py │ ├── low_stock_report.txt │ ├── process_inventory.py │ ├── pydantic_utils.py │ ├── sample.csv │ ├── sample.txt │ ├── set_utils.py │ ├── tuple_utils.py │ └── venv/ (not tracked) ``` </code> </pre>
+
+
+---
+
+## 💻 How to Set Up & Run
+
+### 🧪 1. Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd inventory-manager
+
+# Navigate to week_2 folder
+cd week_2
+
+# Create virtual environment
+python3 -m venv venv
+
+# Activate it (Linux/Mac)
+source venv/bin/activate
+
+# (On Windows)
+venv\Scripts\activate
+
+# 📦 3. Install Dependencies
+pip install pydantic
+
+
+# 🚀 How to Run the Project
+python process_inventory.py
+```
 
 ## 🗓️ Daily Topics & Learnings
 
@@ -79,3 +114,9 @@ This week focused on mastering core Python data structures and procedural progra
 
 ---
 
+## 🧪 Daily Drills
+
+1. **Remove duplicates from a list** using `set()`
+2. **Convert list of tuples into a dictionary**:
+   ```python
+   dict([("Alice", 80), ("Bob", 90)])
