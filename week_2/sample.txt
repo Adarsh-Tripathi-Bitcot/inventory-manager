@@ -1,0 +1,5 @@
+This is the first line.
+Here is the second line.
+Python is great for text file handling.
+This is the fourth line, 
+Let's write to a text file!This will be added at the end.
