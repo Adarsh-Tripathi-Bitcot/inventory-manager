@@ -6,14 +6,14 @@ with open("sample.txt", "r") as f:
 
 # Writing to Files
 # Overwrites the file
-# with open("sample.txt", "w") as f:
-#     f.write("Hello, file!\n")
-#     f.write("Another line.\n")
+with open("sample.txt", "w") as f:
+    f.write("Hello, file!\n")
+    f.write("Another line.\n")
 
 
 # Append Mode 
-# with open("sample.txt", "a") as f:
-#     f.write("This will be added at the end.\n")
+with open("sample.txt", "a") as f:
+    f.write("This will be added at the end.\n")
 
 
 # Reading Line-by-Line
