@@ -22,8 +22,33 @@ This week focused on mastering core Python data structures and procedural progra
 ---
 
 ## 📂 Project Structure
-<pre> <code> ## 📂 Project Structure ```plaintext inventory-manager/ ├── .gitignore ├── README.md ├── week_1/ │ ├── f_principle.py │ ├── practice.py │ └── venv/ (not tracked) ├── week_2/ │ ├── control_flow.py │ ├── csv_utils.py │ ├── daily_drills.py │ ├── error_handling.py │ ├── errors.log │ ├── file_handling.py │ ├── function_utils.py │ ├── inventory.csv │ ├── items.csv │ ├── list_utils.py │ ├── low_stock_report.txt │ ├── process_inventory.py │ ├── pydantic_utils.py │ ├── sample.csv │ ├── sample.txt │ ├── set_utils.py │ ├── tuple_utils.py │ └── venv/ (not tracked) ``` </code> </pre>
-
+```
+inventory-manager/
+├── .gitignore
+├── README.md
+├── week_1/
+│   ├── f_principle.py
+│   ├── practice.py
+│   └── venv/  (not tracked)
+├── week_2/
+│   ├── control_flow.py
+│   ├── csv_utils.py
+│   ├── daily_drills.py
+│   ├── error_handling.py
+│   ├── errors.log
+│   ├── file_handling.py
+│   ├── function_utils.py
+│   ├── inventory.csv
+│   ├── items.csv
+│   ├── list_utils.py
+│   ├── low_stock_report.txt
+│   ├── process_inventory.py
+│   ├── pydantic_utils.py
+│   ├── sample.csv
+│   ├── sample.txt
+│   ├── set_utils.py
+│   ├── tuple_utils.py
+│   └── venv/  (not tracked)
 
 ---
 
