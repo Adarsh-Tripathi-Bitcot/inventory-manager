@@ -1,17 +1,9 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from datetime import date
 
 
 class Product(BaseModel):
-    """
-    Represents a generic product.
-
-    Attributes:
-        product_id (str): Unique identifier.
-        product_name (str): Name of the product.
-        quantity (int): Quantity in stock (must be non-negative).
-        price (float): Price per unit (must be positive).
-    """
+    """Represents a generic product in the inventory."""
 
     product_id: str
     product_name: str
@@ -19,43 +11,45 @@ class Product(BaseModel):
     price: float = Field(gt=0.0)
 
     def get_total_value(self) -> float:
-        """
-        Calculates the total stock value.
-
-        Returns:
-            float: quantity * price
-        """
+        """Returns the total value of this product in stock."""
         return self.quantity * self.price
 
 
 class FoodProduct(Product):
-    """
-    A specialized product with an expiry date.
-
-    Attributes:
-        expiry_date (date): Expiry date of the food product.
-    """
+    """Represents a food product with an expiry date."""
 
     expiry_date: date
 
+    @model_validator(mode="after")
+    def check_expiry_date(self) -> "FoodProduct":
+        """Ensures expiry_date is present."""
+        if not self.expiry_date:
+            raise ValueError("Food products must have an expiry_date")
+        return self
+
 
 class ElectronicProduct(Product):
-    """
-    A specialized product with a warranty period.
+    """Represents an electronic product with warranty period."""
 
-    Attributes:
-        warranty_period (int): Warranty in months.
-    """
+    warranty_period: int = Field(ge=0)
 
-    warranty_period: int
+    @model_validator(mode="after")
+    def check_warranty(self) -> "ElectronicProduct":
+        """Ensures warranty_period is present."""
+        if self.warranty_period is None:
+            raise ValueError("Electronic products must have a warranty_period")
+        return self
 
 
 class BookProduct(Product):
-    """
-    A specialized product with an author.
-
-    Attributes:
-        author (str): Author of the book.
-    """
+    """Represents a book with author and pages."""
 
     author: str
+    pages: int = Field(ge=1)
+
+    @model_validator(mode="after")
+    def check_author_and_pages(self) -> "BookProduct":
+        """Ensures author and pages are present."""
+        if not self.author or self.pages is None:
+            raise ValueError("Book products must have both author and pages")
+        return self
