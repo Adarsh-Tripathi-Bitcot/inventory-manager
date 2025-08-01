@@ -20,6 +20,7 @@ def greet(name):
     """
     print(f"Hello, {name}!")
 
+
 greet("Alice")
 
 
@@ -36,11 +37,13 @@ def square(num):
     """
     return num * num
 
+
 result = square(5)
 print(result)  # 25
 
 
 # Prime Number Checker Components
+
 
 def get_input():
     """
@@ -87,6 +90,7 @@ main()
 
 
 # List Summary Statistics Script
+
 
 def get_inputs():
     """

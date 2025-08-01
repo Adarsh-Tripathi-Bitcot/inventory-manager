@@ -145,3 +145,83 @@ python process_inventory.py
 2. **Convert list of tuples into a dictionary**:
    ```python
    dict([("Alice", 80), ("Bob", 90)])
+
+
+  # 🧱 Inventory Manager – Week 3
+
+A continuation of the inventory processor project, this week applies **Object-Oriented Programming (OOP)** principles and project structuring best practices. The goal is to transform procedural code into a clean, modular, and extensible Python package.
+
+---
+
+## 📅 Overview – Week 3
+
+This week focused on understanding and applying Object-Oriented Programming (OOP) concepts to refactor the inventory tool built in Week 2. By organizing code into classes and separating concerns, the project becomes easier to maintain, test, and extend.
+
+---
+
+## 🏗️ Project Structure for Week-3 (OOP Version)
+
+```
+week_3/
+  inventory-manager/
+  ├── init.py           # Marks the directory as a package
+  ├── models.py         # Pydantic Product model & subclasses
+  ├── core.py           # Inventory class (business logic)
+  ├── utils.py          # Logging helpers (e.g., for validation errors)
+  ├── data/
+  │ └── products.csv    # Inventory data file
+  │
+  ├── errors.log                  # Auto-generated log for validation issues
+  ├── low_stock_report.txt        # Auto-generated report for low stock items
+  ├── main.py                     # To Run the Project
+  ├── pyproject.toml              # Black + Ruff configuration
+  ├── requirements.txt            # Pydantic, Black, Ruff
+
+  ```
+
+## 💻 How to Set Up & Run
+
+### 🔧 1. Clone the Repository
+```bash
+git clone <your-repo-url>
+cd inventory-manager
+
+# 🧪 2. Set Up Virtual Environment
+virtualenv venv
+source venv/bin/activate      # Linux/macOS
+venv\Scripts\activate         # Windows
+
+#📦 3. Install Dependencies
+pip install -r requirements.txt
+
+# 🚀 How to Run the Project
+python main.py
+```
+
+📌 Key Concepts Practiced
+```
+🧱 Object-Oriented Programming (OOP)
+
+✅ SRP & OCP principles (Clean Code)
+
+🧪 Data validation with Pydantic
+
+📁 Modular Python package design
+
+🧼 Code quality tools: Black and Ruff
+```
+
+🧪 Tools Used
+```
+| Tool         | Purpose                      |
+| ------------ | ---------------------------- |
+| **Pydantic** | Validation of product data   |
+| **Black**    | Auto formatting              |
+| **Ruff**     | Fast and configurable linter |
+```
+
+Run them like this:
+```
+black .
+ruff .
+```

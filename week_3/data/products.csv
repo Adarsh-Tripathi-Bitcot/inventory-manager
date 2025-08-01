@@ -1,0 +1,6 @@
+product_id,product_name,quantity,price
+P001,Apple,5,1.5
+P002,Banana,-2,0.5
+P003,Laptop,10,500.0
+P004,Book,-3,12.0
+P005,Keyboard,abc,20.0

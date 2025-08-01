@@ -20,7 +20,6 @@ for i in range(5):  # 0 to 4
     print(i)
 
 
-
 # while Loops
 i = 0
 while i < 5:
@@ -28,13 +27,11 @@ while i < 5:
     i += 1
 
 
-# Write a program that asks the user for a number. If it's even, print “Even”, otherwise print “Odd”.
-# Then use a for loop to print the first 10 multiples of that number.
 num = int(input("Enter a number : "))
-if num%2==0:
+if num % 2 == 0:
     print("Even")
 else:
     print("Odd")
 
-for i in range(1,11):
+for i in range(1, 11):
     print(f"{num} * {i} = {num * i}")

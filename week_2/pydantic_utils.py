@@ -3,6 +3,7 @@ import csv
 from pydantic import BaseModel, Field, field_validator, ValidationError
 from typing import Literal  # noqa: F401
 
+
 class Item(BaseModel):
     name: str
     quantity: int = Field(gt=0)  # Must be > 0
