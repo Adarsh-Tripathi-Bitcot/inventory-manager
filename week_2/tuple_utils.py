@@ -12,12 +12,12 @@ x, y = point
 print(x, y)  # 1 2
 
 
-
 # Write a function that: Takes two numbers Returns both the sum and the product as a tuple
 # Call the function and print the results
 
-def calculate(a,b):
-    return(a+b, a*b)
+
+def calculate(a, b):
+    return (a + b, a * b)
 
 
 num1 = int(input("Enter 1st number : "))

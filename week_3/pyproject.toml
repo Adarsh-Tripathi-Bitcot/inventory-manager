@@ -1,0 +1,10 @@
+[project]
+name = "inventory_manager"
+version = "0.1.0"
+description = "Inventory management system using OOP in Python"
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88

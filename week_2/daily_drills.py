@@ -1,5 +1,6 @@
 from typing import List, Tuple, Dict
 
+
 # Remove Duplicates from List
 def remove_duplicates(nums: List[int]) -> List[int]:
     """
@@ -13,6 +14,7 @@ def remove_duplicates(nums: List[int]) -> List[int]:
     """
     return list(set(nums))
 
+
 print(remove_duplicates([1, 2, 2, 3, 4, 4]))
 
 
@@ -22,12 +24,13 @@ def map_scores(data: List[Tuple[str, int]]) -> Dict[str, int]:
     Convert a list of (name, score) tuples into a dictionary.
 
     Args:
-        data (List[Tuple[str, int]]): A list of tuples where each tuple contains a name and a score.
+        data (List[Tuple[str, int]]): List of (name, score) pairs.
 
     Returns:
         Dict[str, int]: A dictionary mapping names to their corresponding scores.
     """
     return dict(data)
+
 
 print(map_scores([("Alice", 90), ("Bob", 85)]))
 

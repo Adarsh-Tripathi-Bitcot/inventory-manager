@@ -1,8 +1,17 @@
 from pydantic import BaseModel, Field
+from datetime import date
 
 
 class Product(BaseModel):
-    """Represents a generic product with basic attributes."""
+    """
+    Represents a generic product.
+
+    Attributes:
+        product_id (str): Unique identifier.
+        product_name (str): Name of the product.
+        quantity (int): Quantity in stock (must be non-negative).
+        price (float): Price per unit (must be positive).
+    """
 
     product_id: str
     product_name: str
@@ -11,9 +20,42 @@ class Product(BaseModel):
 
     def get_total_value(self) -> float:
         """
-        Calculate the total value of the product's inventory.
+        Calculates the total stock value.
 
         Returns:
-            float: Total value (price * quantity).
+            float: quantity * price
         """
         return self.quantity * self.price
+
+
+class FoodProduct(Product):
+    """
+    A specialized product with an expiry date.
+
+    Attributes:
+        expiry_date (date): Expiry date of the food product.
+    """
+
+    expiry_date: date
+
+
+class ElectronicProduct(Product):
+    """
+    A specialized product with a warranty period.
+
+    Attributes:
+        warranty_period (int): Warranty in months.
+    """
+
+    warranty_period: int
+
+
+class BookProduct(Product):
+    """
+    A specialized product with an author.
+
+    Attributes:
+        author (str): Author of the book.
+    """
+
+    author: str
