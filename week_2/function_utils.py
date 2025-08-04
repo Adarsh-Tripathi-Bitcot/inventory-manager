@@ -1,3 +1,7 @@
+from typing import List
+from pydantic import BaseModel, ValidationError
+
+
 # Defining Functions
 def greet():
     """
@@ -11,7 +15,7 @@ greet()  # Output: Hello!
 
 
 # Parameters and Arguments
-def greet(name):
+def greet(name: str):
     """
     Greets the user by name.
 
@@ -25,7 +29,7 @@ greet("Alice")
 
 
 # Returning Values
-def square(num):
+def square(num: float) -> float:
     """
     Returns the square of a given number.
 
@@ -43,6 +47,17 @@ print(result)  # 25
 
 
 # Prime Number Checker Components
+class PrimeInput(BaseModel):
+    """
+    Pydantic model for validating prime number input.
+    """
+    num: int
+
+    @classmethod
+    def validate(cls, value: int) -> 'PrimeInput':
+        if value < 0:
+            raise ValueError("Number cannot be negative")
+        return cls(num=value)
 
 
 def get_input():
@@ -52,11 +67,16 @@ def get_input():
     Returns:
         int: The user input converted to an integer.
     """
-    num = int(input("Enter a number: "))
-    return num
+    try:
+        num = int(input("Enter a number: "))
+        PrimeInput.validate(num)  # Pydantic validation
+        return num
+    except ValueError as e:
+        print(f"Invalid input: {e}")
+        return get_input()  # Retry until valid input
 
 
-def is_prime(n):
+def is_prime(n: int) -> bool:
     """
     Checks whether a number is a prime number.
 
@@ -68,7 +88,7 @@ def is_prime(n):
     """
     if n <= 1:
         return False
-    for i in range(2, n):
+    for i in range(2, int(n ** 0.5) + 1):  # Improved prime check (only up to sqrt(n))
         if n % i == 0:
             return False
     return True
@@ -91,6 +111,12 @@ main()
 
 # List Summary Statistics Script
 
+class ListInput(BaseModel):
+    """
+    Pydantic model to validate list of numbers input.
+    """
+    numbers: List[int]
+
 
 def get_inputs():
     """
@@ -99,27 +125,18 @@ def get_inputs():
     Returns:
         list of str: A list of numbers in string format.
     """
-    numbers = input("Enter a list of numbers separated by comma(,) : ").split(",")
-    return numbers
+    try:
+        numbers = input("Enter a list of numbers separated by comma(,) : ").split(",")
+        # Convert to integers and validate using Pydantic
+        numbers_int = [int(i) for i in numbers]
+        ListInput(numbers=numbers_int)  # Pydantic validation
+        return numbers_int
+    except ValueError:
+        print("Invalid input. Please enter a valid list of numbers.")
+        return get_inputs()
 
 
-def str_to_int(numbers):
-    """
-    Converts a list of number strings to integers.
-
-    Args:
-        numbers (list of str): The list of number strings.
-
-    Returns:
-        list of int: The converted list of integers.
-    """
-    lst = []
-    for i in numbers:
-        lst.append(int(i))
-    return lst
-
-
-def total(lst):
+def total(lst: List[int]):
     """
     Prints the sum of the numbers in the list.
 
@@ -129,24 +146,24 @@ def total(lst):
     print("Sum:", sum(lst))
 
 
-def avg(lst):
+def avg(lst: List[int]):
     """
     Prints the average of the numbers in the list.
 
     Args:
         lst (list of int): The list of numbers.
     """
-    print("Average:", sum(lst) / len(lst))
+    print("Average:", sum(lst) / len(lst) if lst else 0)
 
 
-def max_num(lst):
+def max_num(lst: List[int]):
     """
     Prints the maximum number from the list.
 
     Args:
         lst (list of int): The list of numbers.
     """
-    print("Maximum:", max(lst))
+    print("Maximum:", max(lst) if lst else None)
 
 
 def main():
@@ -154,11 +171,10 @@ def main():
     Main function to gather input and print summary statistics.
     """
     numbers = get_inputs()
-    lst = str_to_int(numbers)
 
-    total(lst)
-    avg(lst)
-    max_num(lst)
+    total(numbers)
+    avg(numbers)
+    max_num(numbers)
 
 
 main()
