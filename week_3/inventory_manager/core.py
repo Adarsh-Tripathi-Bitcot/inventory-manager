@@ -26,26 +26,29 @@ class Inventory:
         Args:
             file_path (str): Path to the CSV file.
         """
-        with open(file_path, newline="") as f:
-            reader = csv.DictReader(f)
-            for row_num, row in enumerate(reader, start=2):  # header is line 1
-                # Safely convert empty strings to None
-                for key, value in row.items():
-                    row[key] = value if (value is not None and value.strip() != "") else None
+        try:
+            with open(file_path, newline="") as f:
+                reader = csv.DictReader(f)
+                for row_num, row in enumerate(reader, start=2):  # header is line 1
+                    # Safely convert empty strings to None
+                    for key, value in row.items():
+                        row[key] = value if (value is not None and value.strip() != "") else None
 
-                try:
-                    product_type = row.get("type")
-                    if product_type == "food":
-                        product = FoodProduct(**row)
-                    elif product_type == "electronic":
-                        product = ElectronicProduct(**row)
-                    elif product_type == "book":
-                        product = BookProduct(**row)
-                    else:
-                        product = Product(**row)
-                    self.products.append(product)
-                except ValidationError as e:
-                    log_validation_error(row_num, e)
+                    try:
+                        product_type = row.get("type")
+                        if product_type == "food":
+                            product = FoodProduct(**row)
+                        elif product_type == "electronic":
+                            product = ElectronicProduct(**row)
+                        elif product_type == "book":
+                            product = BookProduct(**row)
+                        else:
+                            product = Product(**row)
+                        self.products.append(product)
+                    except ValidationError as e:
+                        log_validation_error(row_num, e)
+        except Exception as e:
+            print(f"Error loading CSV file {file_path}: {e}")
 
     def generate_low_stock_report(self, threshold: int = 10) -> None:
         """
@@ -54,10 +57,13 @@ class Inventory:
         Args:
             threshold (int): Stock quantity threshold.
         """
-        with open("low_stock_report.txt", "w") as f:
-            for product in self.products:
-                if product.quantity < threshold:
-                    f.write(f"{product.product_name}: {product.quantity}\n")
+        try:
+            with open("low_stock_report.txt", "w") as f:
+                for product in self.products:
+                    if product.quantity < threshold:
+                        f.write(f"{product.product_name}: {product.quantity}\n")
+        except Exception as e:
+            print(f"Error generating low stock report: {e}")
 
     def print_summary_dashboard(self) -> None:
         """
@@ -67,21 +73,24 @@ class Inventory:
         - Highest sale product (by total value)
         - Total inventory value
         """
-        total_products = len(self.products)
-        total_quantity = sum(product.quantity for product in self.products)
-        total_value = sum(product.get_total_value() for product in self.products)
+        try:
+            total_products = len(self.products)
+            total_quantity = sum(product.quantity for product in self.products)
+            total_value = sum(product.get_total_value() for product in self.products)
 
-        # Get product with highest total sale value
-        highest_sale_product = max(self.products, key=lambda p: p.get_total_value(), default=None)
+            # Get product with highest total sale value
+            highest_sale_product = max(self.products, key=lambda p: p.get_total_value(), default=None)
 
-        print("\nINVENTORY SUMMARY DASHBOARD\n")
-        print(f"TOTAL PRODUCTS  : {total_products}")
-        print(f"TOTAL QUANTITY  : {total_quantity}")
-        if highest_sale_product:
-            print(
-                f"HIGHEST SALE PRODUCT : "
-                f"{highest_sale_product.product_name} (Rs {highest_sale_product.get_total_value():,.2f})"
-            )
-        else:
-            print("HIGHEST SALE PRODUCT : N/A")
-        print(f"Total inventory value : Rs {total_value:,.2f}\n")
+            print("\nINVENTORY SUMMARY DASHBOARD\n")
+            print(f"TOTAL PRODUCTS  : {total_products}")
+            print(f"TOTAL QUANTITY  : {total_quantity}")
+            if highest_sale_product:
+                print(
+                    f"HIGHEST SALE PRODUCT : "
+                    f"{highest_sale_product.product_name} (Rs {highest_sale_product.get_total_value():,.2f})"
+                )
+            else:
+                print("HIGHEST SALE PRODUCT : N/A")
+            print(f"Total inventory value : Rs {total_value:,.2f}\n")
+        except Exception as e:
+            print(f"Error printing summary dashboard: {e}")
