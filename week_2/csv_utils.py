@@ -23,7 +23,7 @@ with open("sample.csv", "w", newline="") as f:
 # Writing with csv.DictWriter
 data = [
     {"name": "Alice", "age": 30, "city": "NY"},
-    {"name": "Bob", "age": 25, "city": "Delhi"}
+    {"name": "Bob", "age": 25, "city": "Delhi"},
 ]
 
 with open("output.csv", "w", newline="") as f:

@@ -6,7 +6,7 @@ empty = {}
 student = {"name": "John", "marks": 85}
 
 # Accessing Values
-print(student["name"])     # John
+print(student["name"])  # John
 print(student.get("marks"))  # 85
 print(student.get("grade", "Not available"))  # Safe access
 

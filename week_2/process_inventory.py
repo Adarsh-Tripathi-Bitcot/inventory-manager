@@ -13,6 +13,7 @@ class Product(BaseModel):
         quantity (int): Available stock (must be ≥ 0).
         price (float): Price per unit (must be > 0).
     """
+
     product_id: str
     product_name: str
     quantity: int = Field(ge=0)
@@ -35,7 +36,9 @@ def load_and_validate_products(filename: str) -> List[Product]:
     products: List[Product] = []
     with open(filename, "r") as f, open("errors.log", "w") as error_log:
         reader = csv.DictReader(f)
-        for i, row in enumerate(reader, start=2):  # start=2 accounts for the header line
+        for i, row in enumerate(
+            reader, start=2
+        ):  # start=2 accounts for the header line
             try:
                 product = Product(**row)
                 products.append(product)
