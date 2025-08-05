@@ -75,6 +75,25 @@ def test_product_negative_price():
             price=-50.0
         )
 
+
+def test_product_blank_name():
+    product = Product(
+        product_id="P008",
+        product_name="",
+        quantity=1,
+        price=10.0
+    )
+    assert product.product_name == ""  # blank name is allowed, but maybe shouldn't be in real-world
+
+
+def test_product_id_is_required():
+    with pytest.raises(ValidationError):
+        Product(
+            product_name="Unnamed",
+            quantity=1,
+            price=100.0
+        )
+
 # ---------- FoodProduct Tests ----------
 
 def test_food_product_expiry_field():
@@ -96,8 +115,18 @@ def test_food_product_missing_expiry():
             product_name="Yogurt",
             quantity=5,
             price=30.0
-            # missing expiry_date
         )
+
+
+def test_food_product_past_expiry_date():
+    food = FoodProduct(
+        product_id="F003",
+        product_name="Old Cheese",
+        quantity=1,
+        price=20.0,
+        expiry_date="2020-01-01"
+    )
+    assert food.expiry_date == date(2020, 1, 1)  # Validation allows past dates by default
 
 # ---------- ElectronicProduct Tests ----------
 
@@ -120,7 +149,7 @@ def test_electronics_product_invalid_warranty():
             product_name="Headphones",
             quantity=10,
             price=1500.0,
-            warranty_period=-1  # corrected field name
+            warranty_period=-1
         )
 
 
@@ -131,7 +160,6 @@ def test_electronics_product_missing_warranty():
             product_name="Tablet",
             quantity=2,
             price=15000.0
-            # missing warranty_period
         )
 
 # ---------- BookProduct Tests ----------
@@ -158,7 +186,6 @@ def test_book_product_missing_author():
             quantity=4,
             price=300.0,
             pages=100
-            # missing author
         )
 
 
@@ -173,12 +200,26 @@ def test_book_product_zero_pages():
             pages=0
         )
 
+
+def test_book_product_blank_author():
+    with pytest.raises(ValidationError):
+        BookProduct(
+            product_id="B005",
+            product_name="Unknown",
+            quantity=2,
+            price=200.0,
+            author="",
+            pages=150
+        )
+
 # ---------- Parametrized Total Value Edge Cases ----------
 
 @pytest.mark.parametrize("quantity,price,expected", [
     (0, 100.0, 0.0),
     (10, 0.01, 0.1),
     (1, 999999.99, 999999.99),
+    (999999, 0.01, 9999.99),
+    (5, 19.999, 99.995),
 ])
 def test_product_total_value_edge_cases(quantity, price, expected):
     product = Product(
@@ -187,4 +228,4 @@ def test_product_total_value_edge_cases(quantity, price, expected):
         quantity=quantity,
         price=price
     )
-    assert product.get_total_value() == expected
+    assert round(product.get_total_value(), 5) == round(expected, 5)
