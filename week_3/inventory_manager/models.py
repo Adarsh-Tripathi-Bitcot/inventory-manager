@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, model_validator
 from datetime import date
+from typing import Optional
 
 
 class Product(BaseModel):
@@ -18,12 +19,12 @@ class Product(BaseModel):
 class FoodProduct(Product):
     """Represents a food product with an expiry date."""
 
-    expiry_date: date
+    expiry_date: Optional[date] = None
 
     @model_validator(mode="after")
     def check_expiry_date(self) -> "FoodProduct":
         """Ensures expiry_date is present."""
-        if not self.expiry_date:
+        if self.expiry_date is None:
             raise ValueError("Food products must have an expiry_date")
         return self
 
@@ -31,7 +32,7 @@ class FoodProduct(Product):
 class ElectronicProduct(Product):
     """Represents an electronic product with warranty period."""
 
-    warranty_period: int = Field(ge=0)
+    warranty_period: Optional[int] = Field(default=None, ge=0)
 
     @model_validator(mode="after")
     def check_warranty(self) -> "ElectronicProduct":
@@ -44,8 +45,8 @@ class ElectronicProduct(Product):
 class BookProduct(Product):
     """Represents a book with author and pages."""
 
-    author: str
-    pages: int = Field(ge=1)
+    author: Optional[str] = None
+    pages: Optional[int] = Field(default=None, ge=1)
 
     @model_validator(mode="after")
     def check_author_and_pages(self) -> "BookProduct":
