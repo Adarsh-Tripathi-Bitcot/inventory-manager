@@ -5,3 +5,16 @@ errors.log
 low_stock_report.txt
 .pytest_cache
 tests/.pytest_cache
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+pytestdebug.log
