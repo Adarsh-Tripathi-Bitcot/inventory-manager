@@ -5,7 +5,8 @@ from datetime import date
 
 # ---------- Base Product Tests ----------
 
-def test_product_total_value():
+def test_product_total_value() -> None:
+    """Test total value calculation for a Product."""
     product = Product(
         product_id="P001",
         product_name="Keyboard",
@@ -15,7 +16,8 @@ def test_product_total_value():
     assert product.get_total_value() == 500.0
 
 
-def test_product_identity_fields():
+def test_product_identity_fields() -> None:
+    """Test basic identity fields of a Product."""
     product = Product(
         product_id="P004",
         product_name="Webcam",
@@ -26,7 +28,8 @@ def test_product_identity_fields():
     assert product.product_name == "Webcam"
 
 
-def test_product_negative_quantity():
+def test_product_negative_quantity() -> None:
+    """Test that negative quantity raises a ValidationError."""
     with pytest.raises(ValidationError):
         Product(
             product_id="P002",
@@ -36,7 +39,8 @@ def test_product_negative_quantity():
         )
 
 
-def test_product_zero_price():
+def test_product_zero_price() -> None:
+    """Test that zero price raises a ValidationError."""
     with pytest.raises(ValidationError):
         Product(
             product_id="P003",
@@ -46,7 +50,8 @@ def test_product_zero_price():
         )
 
 
-def test_product_zero_quantity():
+def test_product_zero_quantity() -> None:
+    """Test total value calculation when quantity is zero."""
     product = Product(
         product_id="P005",
         product_name="Pen",
@@ -56,7 +61,8 @@ def test_product_zero_quantity():
     assert product.get_total_value() == 0.0
 
 
-def test_product_large_total_value():
+def test_product_large_total_value() -> None:
+    """Test large total value computation."""
     product = Product(
         product_id="P006",
         product_name="Server",
@@ -66,7 +72,8 @@ def test_product_large_total_value():
     assert product.get_total_value() == 250_000_000.0
 
 
-def test_product_negative_price():
+def test_product_negative_price() -> None:
+    """Test that negative price raises a ValidationError."""
     with pytest.raises(ValidationError):
         Product(
             product_id="P007",
@@ -76,17 +83,19 @@ def test_product_negative_price():
         )
 
 
-def test_product_blank_name():
+def test_product_blank_name() -> None:
+    """Test that blank product name is accepted."""
     product = Product(
         product_id="P008",
         product_name="",
         quantity=1,
         price=10.0
     )
-    assert product.product_name == ""  # blank name is allowed, but maybe shouldn't be in real-world
+    assert product.product_name == ""
 
 
-def test_product_id_is_required():
+def test_product_id_is_required() -> None:
+    """Test that missing product_id raises a ValidationError."""
     with pytest.raises(ValidationError):
         Product(
             product_name="Unnamed",
@@ -94,9 +103,11 @@ def test_product_id_is_required():
             price=100.0
         )
 
+
 # ---------- FoodProduct Tests ----------
 
-def test_food_product_expiry_field():
+def test_food_product_expiry_field() -> None:
+    """Test valid expiry date for a FoodProduct."""
     food = FoodProduct(
         product_id="F001",
         product_name="Milk",
@@ -108,7 +119,8 @@ def test_food_product_expiry_field():
     assert food.get_total_value() == 250.0
 
 
-def test_food_product_missing_expiry():
+def test_food_product_missing_expiry() -> None:
+    """Test that missing expiry_date raises a ValidationError."""
     with pytest.raises(ValidationError):
         FoodProduct(
             product_id="F002",
@@ -118,7 +130,8 @@ def test_food_product_missing_expiry():
         )
 
 
-def test_food_product_past_expiry_date():
+def test_food_product_past_expiry_date() -> None:
+    """Test that past expiry_date is allowed by default."""
     food = FoodProduct(
         product_id="F003",
         product_name="Old Cheese",
@@ -126,11 +139,13 @@ def test_food_product_past_expiry_date():
         price=20.0,
         expiry_date="2020-01-01"
     )
-    assert food.expiry_date == date(2020, 1, 1)  # Validation allows past dates by default
+    assert food.expiry_date == date(2020, 1, 1)
+
 
 # ---------- ElectronicProduct Tests ----------
 
-def test_electronics_product_warranty_field():
+def test_electronics_product_warranty_field() -> None:
+    """Test valid warranty_period for ElectronicProduct."""
     electronics = ElectronicProduct(
         product_id="E001",
         product_name="Laptop",
@@ -142,7 +157,8 @@ def test_electronics_product_warranty_field():
     assert electronics.get_total_value() == 180000.0
 
 
-def test_electronics_product_invalid_warranty():
+def test_electronics_product_invalid_warranty() -> None:
+    """Test negative warranty_period raises a ValidationError."""
     with pytest.raises(ValidationError):
         ElectronicProduct(
             product_id="E002",
@@ -153,7 +169,8 @@ def test_electronics_product_invalid_warranty():
         )
 
 
-def test_electronics_product_missing_warranty():
+def test_electronics_product_missing_warranty() -> None:
+    """Test missing warranty_period raises a ValidationError."""
     with pytest.raises(ValidationError):
         ElectronicProduct(
             product_id="E003",
@@ -162,9 +179,11 @@ def test_electronics_product_missing_warranty():
             price=15000.0
         )
 
+
 # ---------- BookProduct Tests ----------
 
-def test_book_product_author_and_pages():
+def test_book_product_author_and_pages() -> None:
+    """Test valid author and pages for a BookProduct."""
     book = BookProduct(
         product_id="B001",
         product_name="Atomic Habits",
@@ -178,7 +197,8 @@ def test_book_product_author_and_pages():
     assert book.get_total_value() == 3992.0
 
 
-def test_book_product_missing_author():
+def test_book_product_missing_author() -> None:
+    """Test missing author raises a ValidationError."""
     with pytest.raises(ValidationError):
         BookProduct(
             product_id="B004",
@@ -189,7 +209,8 @@ def test_book_product_missing_author():
         )
 
 
-def test_book_product_zero_pages():
+def test_book_product_zero_pages() -> None:
+    """Test zero pages raises a ValidationError."""
     with pytest.raises(ValidationError):
         BookProduct(
             product_id="B003",
@@ -201,7 +222,8 @@ def test_book_product_zero_pages():
         )
 
 
-def test_book_product_blank_author():
+def test_book_product_blank_author() -> None:
+    """Test blank author raises a ValidationError."""
     with pytest.raises(ValidationError):
         BookProduct(
             product_id="B005",
@@ -212,6 +234,7 @@ def test_book_product_blank_author():
             pages=150
         )
 
+
 # ---------- Parametrized Total Value Edge Cases ----------
 
 @pytest.mark.parametrize("quantity,price,expected", [
@@ -221,7 +244,8 @@ def test_book_product_blank_author():
     (999999, 0.01, 9999.99),
     (5, 19.999, 99.995),
 ])
-def test_product_total_value_edge_cases(quantity, price, expected):
+def test_product_total_value_edge_cases(quantity: int, price: float, expected: float) -> None:
+    """Test edge cases for total value computation."""
     product = Product(
         product_id="PX",
         product_name="EdgeItem",
