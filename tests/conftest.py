@@ -46,10 +46,10 @@ def book_product():
 @pytest.fixture
 def valid_csv_file(tmp_path):
     csv_data = """product_id,product_name,quantity,price,category,expiry_date,warranty_years,author,genre
-F1,Apple,10,1.2,food,2025-12-31,,, 
-E1,Phone,5,299.99,electronic,,2,, 
-B1,Book Title,3,9.99,book,,,John Doe,Fiction
-"""
+        F1,Apple,10,1.2,food,2025-12-31,,, 
+        E1,Phone,5,299.99,electronic,,2,, 
+        B1,Book Title,3,9.99,book,,,John Doe,Fiction
+    """
     file_path = tmp_path / "products.csv"
     file_path.write_text(csv_data)
     return str(file_path)
