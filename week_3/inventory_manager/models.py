@@ -24,7 +24,7 @@ class FoodProduct(Product):
     @model_validator(mode="after")
     def check_expiry_date(self) -> "FoodProduct":
         """Ensures expiry_date is present."""
-        if not self.expiry_date:
+        if self.expiry_date is None:
             raise ValueError("Food products must have an expiry_date")
         return self
 
@@ -45,8 +45,8 @@ class ElectronicProduct(Product):
 class BookProduct(Product):
     """Represents a book with author and pages."""
 
-    author: str
-    pages: int = Field(ge=1)
+    author: Optional[str] = None
+    pages: Optional[int] = Field(default=None, ge=1)
 
     @model_validator(mode="after")
     def check_author_and_pages(self) -> "BookProduct":

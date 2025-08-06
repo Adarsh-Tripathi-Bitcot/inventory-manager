@@ -4,6 +4,8 @@ __pycache__/
 errors.log
 low_stock_report.txt
 
+.pytest_cache
+tests/.pytest_cache
 
 # Unit test / coverage reports
 htmlcov/
