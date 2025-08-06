@@ -19,7 +19,7 @@ class Product(BaseModel):
 class FoodProduct(Product):
     """Represents a food product with an expiry date."""
 
-    expiry_date: Optional[date] = None
+    expiry_date: Optional[date] = None  # allow None so validator is triggered
 
     @model_validator(mode="after")
     def check_expiry_date(self) -> "FoodProduct":
@@ -32,7 +32,7 @@ class FoodProduct(Product):
 class ElectronicProduct(Product):
     """Represents an electronic product with warranty period."""
 
-    warranty_period: Optional[int] = Field(default=None, ge=0)
+    warranty_period: Optional[int] = Field(ge=0, default=None)  # allow None to trigger validator
 
     @model_validator(mode="after")
     def check_warranty(self) -> "ElectronicProduct":

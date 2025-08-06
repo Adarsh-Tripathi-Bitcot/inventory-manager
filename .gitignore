@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 errors.log
 low_stock_report.txt
+
 .pytest_cache
 tests/.pytest_cache
 
