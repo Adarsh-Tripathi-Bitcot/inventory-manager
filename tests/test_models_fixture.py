@@ -1,95 +1,113 @@
 import pytest
 from pydantic import ValidationError
 from datetime import date
-from inventory_manager.models import FoodProduct, ElectronicProduct, BookProduct, Product
+from inventory_manager.models import FoodProduct, ElectronicProduct, BookProduct
 
 
-def test_product_total_value(base_product: Product) -> None:
-    """Test that total value is calculated correctly for base product."""
+def test_product_total_value(base_product) -> None:
+    """Test total value calculation for base Product fixture."""
     total = base_product.get_total_value()
     assert total == 200.0
 
 
-def test_valid_food_product(food_product: FoodProduct) -> None:
-    """Test that a valid food product has the correct expiry date."""
+def test_valid_food_product(food_product) -> None:
+    """Test FoodProduct fixture for correct expiry date."""
     assert food_product.expiry_date == date(2025, 12, 31)
 
 
-def test_invalid_food_product_missing_expiry() -> None:
-    """Test validation error when expiry date is missing for FoodProduct."""
+@pytest.mark.parametrize(
+    "expiry_date", [None]
+)
+def test_invalid_food_product_missing_expiry(expiry_date) -> None:
+    """
+    Test FoodProduct with invalid expiry_date using parametrize.
+
+    Args:
+        expiry_date: Invalid expiry_date (None).
+    """
     with pytest.raises(ValidationError) as exc_info:
         FoodProduct(
             product_id="F002",
             product_name="Milk",
             quantity=2,
             price=1.5,
-            expiry_date=None
+            expiry_date=expiry_date,
         )
     assert "expiry_date" in str(exc_info.value)
 
 
-def test_valid_electronic_product(electronic_product: ElectronicProduct) -> None:
-    """Test that a valid electronic product has the correct warranty period."""
+def test_valid_electronic_product(electronic_product) -> None:
+    """Test ElectronicProduct fixture for correct warranty period."""
     assert electronic_product.warranty_period == 24
 
 
-def test_invalid_electronic_product_missing_warranty() -> None:
-    """Test validation error when warranty period is missing for ElectronicProduct."""
+@pytest.mark.parametrize(
+    "warranty", [None]
+)
+def test_invalid_electronic_product_missing_warranty(warranty) -> None:
+    """
+    Test ElectronicProduct with missing warranty period.
+
+    Args:
+        warranty: Invalid warranty_period (None).
+    """
     with pytest.raises(ValidationError) as exc_info:
         ElectronicProduct(
             product_id="E002",
             product_name="Tablet",
             quantity=4,
             price=150.0,
-            warranty_period=None
+            warranty_period=warranty,
         )
     assert "warranty_period" in str(exc_info.value)
 
 
-def test_valid_book_product(book_product: BookProduct) -> None:
-    """Test that a valid book product has the correct author and page count."""
+def test_valid_book_product(book_product) -> None:
+    """Test BookProduct fixture for valid fields."""
     assert book_product.author == "John Doe"
     assert book_product.pages == 300
 
 
-def test_invalid_book_product_missing_author() -> None:
-    """Test validation error when author is missing for BookProduct."""
+@pytest.mark.parametrize(
+    "author, pages",
+    [
+        (None, 250),
+        ("Alex", None),
+    ],
+)
+def test_invalid_book_product_missing_fields(author: str | None, pages: int | None) -> None:
+    """
+    Parametrized test for BookProduct with missing author or pages.
+
+    Args:
+        author (str | None): Invalid author field.
+        pages (int | None): Invalid pages field.
+    """
     with pytest.raises(ValidationError) as exc_info:
         BookProduct(
-            product_id="B002",
-            product_name="C++ 101",
-            quantity=4,
-            price=12.0,
-            author=None,
-            pages=250
-        )
-    assert "author" in str(exc_info.value)
-
-
-def test_invalid_book_product_missing_pages() -> None:
-    """Test validation error when pages are missing for BookProduct."""
-    with pytest.raises(ValidationError) as exc_info:
-        BookProduct(
-            product_id="B003",
-            product_name="Go Basics",
+            product_id="BXYZ",
+            product_name="Some Book",
             quantity=3,
-            price=10.0,
-            author="Alex",
-            pages=None
+            price=20.0,
+            author=author,
+            pages=pages,
         )
-    assert "pages" in str(exc_info.value)
+    if author is None:
+        assert "author" in str(exc_info.value)
+    if pages is None:
+        assert "pages" in str(exc_info.value)
 
 
-def test_base_product_fixture(base_product: Product) -> None:
-    """Test that the base product fixture has expected values."""
+def test_base_product_fixture(base_product) -> None:
+    """Assert base_product fixture fields are valid."""
     assert base_product.product_id == "P001"
     assert base_product.product_name == "Generic Product"
     assert base_product.quantity == 10
     assert base_product.price == 20.0
 
 
-def test_food_product_fixture(food_product: FoodProduct) -> None:
-    """Test that the food product fixture has expected values."""
+def test_food_product_fixture(food_product) -> None:
+    """Assert food_product fixture fields are valid."""
     assert food_product.product_id == "F001"
     assert food_product.product_name == "Bread"
     assert food_product.quantity == 5
@@ -97,8 +115,8 @@ def test_food_product_fixture(food_product: FoodProduct) -> None:
     assert str(food_product.expiry_date) == "2025-12-31"
 
 
-def test_electronic_product_fixture(electronic_product: ElectronicProduct) -> None:
-    """Test that the electronic product fixture has expected values."""
+def test_electronic_product_fixture(electronic_product) -> None:
+    """Assert electronic_product fixture fields are valid."""
     assert electronic_product.product_id == "E001"
     assert electronic_product.product_name == "Smartphone"
     assert electronic_product.quantity == 3
@@ -106,8 +124,8 @@ def test_electronic_product_fixture(electronic_product: ElectronicProduct) -> No
     assert electronic_product.warranty_period == 24
 
 
-def test_book_product_fixture(book_product: BookProduct) -> None:
-    """Test that the book product fixture has expected values."""
+def test_book_product_fixture(book_product) -> None:
+    """Assert book_product fixture fields are valid."""
     assert book_product.product_id == "B001"
     assert book_product.product_name == "Python 101"
     assert book_product.quantity == 7
@@ -117,7 +135,12 @@ def test_book_product_fixture(book_product: BookProduct) -> None:
 
 
 def test_valid_csv_file_fixture(valid_csv_file: str) -> None:
-    """Test that the valid CSV file fixture contains expected content."""
+    """
+    Test that CSV file content from fixture is readable and contains sample data.
+
+    Args:
+        valid_csv_file (str): Path to the mock CSV file.
+    """
     with open(valid_csv_file) as f:
         content = f.read()
     assert "Apple" in content
