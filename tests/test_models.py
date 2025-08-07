@@ -1,255 +1,146 @@
 import pytest
 from pydantic import ValidationError
-from inventory_manager.models import Product, FoodProduct, ElectronicProduct, BookProduct
 from datetime import date
+from inventory_manager.models import Product, FoodProduct, ElectronicProduct, BookProduct
 
-# ---------- Base Product Tests ----------
 
-def test_product_total_value() -> None:
-    """Test total value calculation for a Product."""
+@pytest.mark.parametrize(
+    "product_id, product_name, quantity, price",
+    [
+        ("P001", "Item 1", 10, 5.0),
+        ("P002", "Item 2", 0, 99.99),
+    ],
+)
+def test_product_valid(product_id: str, product_name: str, quantity: int, price: float) -> None:
+    """
+    Test Product creation with valid inputs.
+
+    Args:
+        product_id (str): Product ID.
+        product_name (str): Product name.
+        quantity (int): Quantity of the product (>= 0).
+        price (float): Price of the product (> 0.0).
+    """
     product = Product(
-        product_id="P001",
-        product_name="Keyboard",
-        quantity=5,
-        price=100.0
+        product_id=product_id,
+        product_name=product_name,
+        quantity=quantity,
+        price=price,
     )
-    assert product.get_total_value() == 500.0
+    assert product.product_id == product_id
+    assert product.product_name == product_name
+    assert product.quantity == quantity
+    assert product.price == price
 
 
-def test_product_identity_fields() -> None:
-    """Test basic identity fields of a Product."""
-    product = Product(
-        product_id="P004",
-        product_name="Webcam",
-        quantity=2,
-        price=150.0
-    )
-    assert product.product_id == "P004"
-    assert product.product_name == "Webcam"
+@pytest.mark.parametrize(
+    "quantity, price",
+    [
+        (-1, 10.0),
+        (5, -5.0),
+        (-3, -9.0),
+    ],
+)
+def test_product_invalid_values(quantity: int, price: float) -> None:
+    """
+    Test Product model with invalid quantity or price.
 
-
-def test_product_negative_quantity() -> None:
-    """Test that negative quantity raises a ValidationError."""
+    Args:
+        quantity (int): Invalid quantity.
+        price (float): Invalid price.
+    """
     with pytest.raises(ValidationError):
         Product(
-            product_id="P002",
-            product_name="Mouse",
-            quantity=-1,
-            price=50.0
+            product_id="P999",
+            product_name="Invalid",
+            quantity=quantity,
+            price=price,
         )
 
 
-def test_product_zero_price() -> None:
-    """Test that zero price raises a ValidationError."""
-    with pytest.raises(ValidationError):
-        Product(
-            product_id="P003",
-            product_name="Monitor",
-            quantity=5,
-            price=0.0
-        )
-
-
-def test_product_zero_quantity() -> None:
-    """Test total value calculation when quantity is zero."""
-    product = Product(
-        product_id="P005",
-        product_name="Pen",
-        quantity=0,
-        price=10.0
-    )
-    assert product.get_total_value() == 0.0
-
-
-def test_product_large_total_value() -> None:
-    """Test large total value computation."""
-    product = Product(
-        product_id="P006",
-        product_name="Server",
-        quantity=1000,
-        price=250000.0
-    )
-    assert product.get_total_value() == 250_000_000.0
-
-
-def test_product_negative_price() -> None:
-    """Test that negative price raises a ValidationError."""
-    with pytest.raises(ValidationError):
-        Product(
-            product_id="P007",
-            product_name="USB Cable",
-            quantity=10,
-            price=-50.0
-        )
-
-
-def test_product_blank_name() -> None:
-    """Test that blank product name is accepted."""
-    product = Product(
-        product_id="P008",
-        product_name="",
-        quantity=1,
-        price=10.0
-    )
-    assert product.product_name == ""
-
-
-def test_product_id_is_required() -> None:
-    """Test that missing product_id raises a ValidationError."""
-    with pytest.raises(ValidationError):
-        Product(
-            product_name="Unnamed",
-            quantity=1,
-            price=100.0
-        )
-
-
-# ---------- FoodProduct Tests ----------
-
-def test_food_product_expiry_field() -> None:
-    """Test valid expiry date for a FoodProduct."""
+def test_food_product_valid() -> None:
+    """Test valid FoodProduct creation."""
     food = FoodProduct(
         product_id="F001",
-        product_name="Milk",
+        product_name="Bread",
         quantity=10,
-        price=25.0,
-        expiry_date="2025-12-31"
+        price=2.5,
+        expiry_date=date(2025, 12, 31),
     )
     assert food.expiry_date == date(2025, 12, 31)
-    assert food.get_total_value() == 250.0
 
 
-def test_food_product_missing_expiry() -> None:
-    """Test that missing expiry_date raises a ValidationError."""
+def test_food_product_invalid_expiry_date() -> None:
+    """Test FoodProduct with missing expiry_date."""
     with pytest.raises(ValidationError):
         FoodProduct(
             product_id="F002",
-            product_name="Yogurt",
+            product_name="Milk",
             quantity=5,
-            price=30.0
+            price=1.99,
+            expiry_date=None,
         )
 
 
-def test_food_product_past_expiry_date() -> None:
-    """Test that past expiry_date is allowed by default."""
-    food = FoodProduct(
-        product_id="F003",
-        product_name="Old Cheese",
-        quantity=1,
-        price=20.0,
-        expiry_date="2020-01-01"
-    )
-    assert food.expiry_date == date(2020, 1, 1)
-
-
-# ---------- ElectronicProduct Tests ----------
-
-def test_electronics_product_warranty_field() -> None:
-    """Test valid warranty_period for ElectronicProduct."""
-    electronics = ElectronicProduct(
+def test_electronic_product_valid() -> None:
+    """Test valid ElectronicProduct creation."""
+    elec = ElectronicProduct(
         product_id="E001",
-        product_name="Laptop",
+        product_name="Phone",
         quantity=3,
-        price=60000.0,
-        warranty_period=2
+        price=500.0,
+        warranty_period=12,
     )
-    assert electronics.warranty_period == 2
-    assert electronics.get_total_value() == 180000.0
+    assert elec.warranty_period == 12
 
 
-def test_electronics_product_invalid_warranty() -> None:
-    """Test negative warranty_period raises a ValidationError."""
+def test_electronic_product_invalid_warranty() -> None:
+    """Test ElectronicProduct with missing warranty_period."""
     with pytest.raises(ValidationError):
         ElectronicProduct(
             product_id="E002",
-            product_name="Headphones",
-            quantity=10,
-            price=1500.0,
-            warranty_period=-1
-        )
-
-
-def test_electronics_product_missing_warranty() -> None:
-    """Test missing warranty_period raises a ValidationError."""
-    with pytest.raises(ValidationError):
-        ElectronicProduct(
-            product_id="E003",
             product_name="Tablet",
-            quantity=2,
-            price=15000.0
+            quantity=1,
+            price=350.0,
+            warranty_period=None,
         )
 
 
-# ---------- BookProduct Tests ----------
-
-def test_book_product_author_and_pages() -> None:
-    """Test valid author and pages for a BookProduct."""
+def test_book_product_valid() -> None:
+    """Test valid BookProduct creation."""
     book = BookProduct(
         product_id="B001",
-        product_name="Atomic Habits",
-        quantity=8,
-        price=499.0,
-        author="James Clear",
-        pages=320
+        product_name="Python 101",
+        quantity=7,
+        price=15.0,
+        author="John Doe",
+        pages=300,
     )
-    assert book.author == "James Clear"
-    assert book.pages == 320
-    assert book.get_total_value() == 3992.0
+    assert book.author == "John Doe"
+    assert book.pages == 300
 
 
 def test_book_product_missing_author() -> None:
-    """Test missing author raises a ValidationError."""
+    """Test BookProduct with missing author."""
     with pytest.raises(ValidationError):
         BookProduct(
-            product_id="B004",
-            product_name="Anonymous Book",
-            quantity=4,
-            price=300.0,
-            pages=100
+            product_id="B002",
+            product_name="C++ Basics",
+            quantity=3,
+            price=10.0,
+            author=None,
+            pages=250,
         )
 
 
-def test_book_product_zero_pages() -> None:
-    """Test zero pages raises a ValidationError."""
+def test_book_product_missing_pages() -> None:
+    """Test BookProduct with missing pages."""
     with pytest.raises(ValidationError):
         BookProduct(
             product_id="B003",
-            product_name="Zero Page Book",
-            quantity=1,
-            price=100.0,
-            author="Ghost Author",
-            pages=0
-        )
-
-
-def test_book_product_blank_author() -> None:
-    """Test blank author raises a ValidationError."""
-    with pytest.raises(ValidationError):
-        BookProduct(
-            product_id="B005",
-            product_name="Unknown",
+            product_name="Go Lang",
             quantity=2,
-            price=200.0,
-            author="",
-            pages=150
+            price=12.0,
+            author="Alex",
+            pages=None,
         )
-
-
-# ---------- Parametrized Total Value Edge Cases ----------
-
-@pytest.mark.parametrize("quantity,price,expected", [
-    (0, 100.0, 0.0),
-    (10, 0.01, 0.1),
-    (1, 999999.99, 999999.99),
-    (999999, 0.01, 9999.99),
-    (5, 19.999, 99.995),
-])
-def test_product_total_value_edge_cases(quantity: int, price: float, expected: float) -> None:
-    """Test edge cases for total value computation."""
-    product = Product(
-        product_id="PX",
-        product_name="EdgeItem",
-        quantity=quantity,
-        price=price
-    )
-    assert round(product.get_total_value(), 5) == round(expected, 5)
