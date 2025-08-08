@@ -1,14 +1,10 @@
-
----
-
 ## `README.md`
 
-```markdown
+
 # 📦 Inventory Manager
 
 A Python-based inventory management tool built as a **4-week learning project**, evolving from basic scripts to a fully tested, object-oriented package.
 
----
 
 ## 🚀 Features
 - Process CSV inventory files
@@ -17,7 +13,6 @@ A Python-based inventory management tool built as a **4-week learning project**,
 - Calculate total inventory value
 - Full test suite with >95% coverage
 
----
 
 ## 📅 Learning Journey
 - **[Week 1–4 Overview](docs/INDEX.md)**
@@ -25,9 +20,9 @@ A Python-based inventory management tool built as a **4-week learning project**,
 - **[Setup & Installation](docs/SETUP.md)**
 - **[Testing Guide](docs/TESTING.md)**
 
----
 
 ## 🏗️ Project Structure
+```
 inventory-manager/
 ├── week_1/
 ├── week_2/
@@ -36,3 +31,4 @@ inventory-manager/
 ├── requirements.txt
 ├── pytest.ini
 └── README.md
+```
