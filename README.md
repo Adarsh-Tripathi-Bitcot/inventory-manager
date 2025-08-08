@@ -20,10 +20,10 @@ A Python-based inventory management tool built as a **4-week learning project**,
 ---
 
 ## 📅 Learning Journey
-- **[Week 1–4 Overview](./docs/INDEX.md)**
-- [Architecture](./docs/ARCHITECTURE.md)
-- [Setup & Installation](./docs/SETUP.md)
-- [Testing Guide](./docs/TESTING.md)
+- **[Week 1–4 Overview](docs/INDEX.md)**
+- **[Architecture](docs/ARCHITECTURE.md)**
+- **[Setup & Installation](docs/SETUP.md)**
+- **[Testing Guide](docs/TESTING.md)**
 
 ---
 
