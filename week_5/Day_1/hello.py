@@ -9,7 +9,7 @@ def index() -> str:
     Route handler for the root URL ('/'). 
 
     This function will respond to HTTP requests made to the root URL with a 
-    simple "Hello World" message.
+    simple "Hello Flask" message.
 
     Returns:
         str: The HTML response to be returned to the client.
