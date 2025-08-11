@@ -14,7 +14,7 @@ def index() -> str:
     Returns:
         str: The HTML response to be returned to the client.
     """
-    return '<h1>Hello Flask</h1>'
+    return 'Hello Flask'
 
 if __name__ == '__main__':
     """
