@@ -6,4 +6,4 @@ product_id,product_name,quantity,price,type,expiry_date,warranty_period,author,p
 205,Pineapple,7,-2.5,food,2025-10-01,,,
 206,Smartphone,3,70000,electronic,,18,,
 207,Data Science,8,450,book,,,Alice,250
-208,Desk,10,3000,,,,
+208,Desk,10,3000,,,,,
