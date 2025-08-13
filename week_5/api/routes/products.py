@@ -153,3 +153,136 @@ def get_product(product_id: str):
             break
     return jsonify({"error": "Product not found"}), 404
 
+
+
+@api_bp.route("/products", methods=["POST"])
+def create_product():
+    """
+    POST /api/products
+    Body must be JSON representing the product and must include a 'type' field
+    (one of "food", "electronic", "book", or omitted for generic product).
+    Validates using Pydantic model and appends a row to configured CSV.
+
+    Responses:
+        201: created, returns created product
+        400: validation error / bad request
+        409: conflict (product_id already exists)
+    """
+    body = request.get_json(force=True, silent=True)
+    if not body:
+        return jsonify({"error": "Invalid or missing JSON body"}), 400
+
+    type_value = (body.get("type") or "").strip().lower()
+    model_cls = _determine_model_class(type_value)
+
+    # prepare constructor kwargs per model class
+    ctor_kwargs = {}
+    try:
+        # reuse the same keys the _build_model_kwargs_for_type expects
+        ctor_kwargs = _build_model_kwargs_for_type(
+            {
+                "product_id": body.get("product_id", ""),
+                "product_name": body.get("product_name", ""),
+                "quantity": body.get("quantity", ""),
+                "price": body.get("price", ""),
+                "expiry_date": body.get("expiry_date", ""),
+                "warranty_period": body.get("warranty_period", ""),
+                "author": body.get("author", ""),
+                "pages": body.get("pages", ""),
+            },
+            model_cls,
+        )
+        product = model_cls(**ctor_kwargs)
+    except ValidationError as e:
+        return jsonify({"error": e.errors() if hasattr(e, "errors") else str(e)}), 400
+
+    csv_path = _csv_path_from_app()
+    rows = _read_all_rows(csv_path)
+
+    # conflict check
+    if any((r.get("product_id") or "") == product.product_id for r in rows):
+        return jsonify({"error": "Product with this product_id already exists"}), 409
+
+    # append
+    row = _model_to_csv_row(product, type_value)
+    rows.append(row)
+    _write_all_rows(csv_path, rows)
+    return jsonify(product.model_dump()), 201
+
+
+@api_bp.route("/products/<product_id>", methods=["PUT"])
+def update_product(product_id: str):
+    """
+    PUT /api/products/<product_id>
+    Replaces the product with the provided JSON payload (validated with Pydantic).
+    Returns:
+        200 + updated product JSON on success
+        400 on validation error
+        404 if product not present
+    """
+    body = request.get_json(force=True, silent=True)
+    if not body:
+        return jsonify({"error": "Invalid or missing JSON body"}), 400
+
+    type_value = (body.get("type") or "").strip().lower()
+    model_cls = _determine_model_class(type_value)
+
+    # build constructor kwargs and validate
+    try:
+        ctor_kwargs = _build_model_kwargs_for_type(
+            {
+                "product_id": body.get("product_id", product_id),
+                "product_name": body.get("product_name", ""),
+                "quantity": body.get("quantity", ""),
+                "price": body.get("price", ""),
+                "expiry_date": body.get("expiry_date", ""),
+                "warranty_period": body.get("warranty_period", ""),
+                "author": body.get("author", ""),
+                "pages": body.get("pages", ""),
+            },
+            model_cls,
+        )
+        product = model_cls(**ctor_kwargs)
+    except ValidationError as e:
+        return jsonify({"error": e.errors() if hasattr(e, "errors") else str(e)}), 400
+
+    csv_path = _csv_path_from_app()
+    rows = _read_all_rows(csv_path)
+
+    found = False
+    for idx, r in enumerate(rows):
+        if (r.get("product_id") or "") == product_id:
+            # replace row
+            rows[idx] = _model_to_csv_row(product, type_value)
+            found = True
+            break
+
+    if not found:
+        return jsonify({"error": "Product not found"}), 404
+
+    _write_all_rows(csv_path, rows)
+    return jsonify(product.model_dump()), 200
+
+
+@api_bp.route("/products/<product_id>", methods=["DELETE"])
+def delete_product(product_id: str):
+    """
+    DELETE /api/products/<product_id>
+    Removes the product with the given ID from the CSV.
+
+    Returns:
+        204 No Content on successful delete
+        404 Not Found if the product does not exist
+    """
+    csv_path = _csv_path_from_app()
+    rows = _read_all_rows(csv_path)
+
+    # Filter out the product to delete
+    new_rows = [r for r in rows if (r.get("product_id") or "") != product_id]
+
+    if len(new_rows) == len(rows):
+        return jsonify({"error": "Product not found"}), 404
+
+    _write_all_rows(csv_path, new_rows)
+    # No body for 204 per HTTP spec
+    return "", 204
