@@ -376,6 +376,9 @@ A continuation of the Inventory Manager project, this week focuses on exposing o
 - `PUT /api/products/<product_id>` → Validate JSON body, update product.
 
 ### ✅ Day 5 – Integration Testing
+
+[![Coverage Status](https://img.shields.io/badge/coverage-98%25-brightgreen)](https://pytest-cov.readthedocs.io/)
+
 - Configured **Flask test client** for pytest.
 - Wrote request-based tests for all CRUD endpoints in `week_5/tests/test_api_integration.py`.
 
