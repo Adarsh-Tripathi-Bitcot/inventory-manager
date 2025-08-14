@@ -41,3 +41,28 @@ python main.py
 pytest
 With coverage report:
 pytest --cov=.
+
+
+
+## 🖥️ Running the Flask API (Week 5)
+
+1️⃣ Activate virtual environment:
+```bash
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
+
+
+2️⃣ Install dependencies:
+
+pip install -r requirements.txt
+
+
+3️⃣ Run the Flask API:
+
+cd week_5/api
+python -m week_5.api.app
+
+
+API will be available at:
+
+http://127.0.0.1:5000/api/products

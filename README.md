@@ -15,10 +15,11 @@ A Python-based inventory management tool built as a **4-week learning project**,
 
 
 ## 📅 Learning Journey
-- **[Week 1–4 Overview](docs/INDEX.md)**
+- **[Week 1–5 Overview](docs/INDEX.md)**
 - **[Architecture](docs/ARCHITECTURE.md)**
 - **[Setup & Installation](docs/SETUP.md)**
 - **[Testing Guide](docs/TESTING.md)**
+
 
 
 ## 🏗️ Project Structure
@@ -27,6 +28,7 @@ inventory-manager/
 ├── week_1/
 ├── week_2/
 ├── week_3/
+├── week_5/
 ├── tests/
 ├── requirements.txt
 ├── pytest.ini

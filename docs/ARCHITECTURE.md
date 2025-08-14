@@ -11,27 +11,68 @@ The **Inventory Manager** project follows a progressive design:
 ## Folder Structure
 ```
 inventory-manager/
-├── week_1/ # Python basics practice
-├── week_2/ # Procedural version
-│ ├── process_inventory.py
-│ ├── csv_utils.py
-│ ├── pydantic_utils.py
-│ └── ...
-├── week_3/ # OOP version (main package)
-│ └── inventory_manager/
-│ ├── init.py
-│ ├── core.py # Inventory business logic
-│ ├── models.py # Product models (Pydantic)
-│ ├── utils.py # Logging helpers
-│ └── data/ # Sample CSVs
-├── tests/ # Pytest test suite
-│ ├── conftest.py
-│ ├── test_core.py
-│ ├── test_models.py
-│ └── ...
-├── requirements.txt
+├── docs
+│   ├── ARCHITECTURE.md
+│   ├── INDEX.md
+│   ├── SETUP.md
+│   └── TESTING.md
 ├── pytest.ini
-└── README.md
+├── README.md
+├── setup.cfg
+├── tests
+│   ├── conftest.py
+│   ├── requirements.txt
+│   ├── test_core.py
+│   ├── test_models_fixture.py
+│   ├── test_models.py
+├── week_1
+│   ├── f_principle.py
+│   └── practice.py
+├── week_2
+│   ├── control_flow.py
+│   ├── csv_utils.py
+│   ├── daily_drills.py
+│   ├── dictionary_utils.py
+│   ├── error_handling.py
+│   ├── errors.log
+│   ├── file_handling.py
+│   ├── function_utils.py
+│   ├── inventory.csv
+│   ├── items.csv
+│   ├── list_utils.py
+│   ├── low_stock_report.txt
+│   ├── process_inventory.py
+│   ├── pydantic_utils.py
+│   ├── requirements.txt
+│   ├── sample.csv
+│   ├── sample.txt
+│   ├── set_utils.py
+│   ├── tuple_utils.py
+├── week_3
+│   ├── data
+│   │   └── products.csv
+│   ├── inventory_manager
+│   │   ├── core.py
+│   │   ├── __init__.py
+│   │   ├── models.py
+│   │   └── utils.py
+│   ├── main.py
+│   ├── pyproject.toml
+│   ├── requirements.txt
+└── week_5
+    ├── api
+    │   ├── app.py
+    │   ├── __init__.py
+    │   ├── __pycache__
+    │   └── routes
+    │       ├── __init__.py
+    │       ├── products.py
+    ├── Day_1
+    │   └── hello.py
+    ├── requirements.txt
+    ├── tests
+    │   ├── __pycache__
+    │   └── test_api_integration.py
 ```
 
 
@@ -74,3 +115,26 @@ inventory-manager/
 - **OCP (Open/Closed Principle)** – extend with new features without modifying existing code.
 - **Loose Coupling** – `models` independent from `utils`.
 - **Testability** – functions accept dependencies as parameters for easy mocking.
+
+
+## Week 5 – API Architecture
+
+### New Components
+1. **`week_5/api/app.py`**
+   - Flask application entry point.
+   - Registers the `api` blueprint.
+
+2. **`week_5/api/routes/products.py`**
+   - Contains CRUD routes for products.
+   - Uses `inventory_manager` package as the business logic.
+
+3. **`week_5/tests/test_api_integration.py`**
+   - Integration tests for all API endpoints.
+
+---
+
+### API Data Flow
+1. **HTTP Request** → Flask route in `products.py`
+2. **Validation** → Pydantic `Product` model
+3. **Processing** → `Inventory` class from `inventory_manager`
+4. **HTTP Response** → JSON with proper status code

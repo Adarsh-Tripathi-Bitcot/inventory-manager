@@ -331,3 +331,81 @@ pytest --cov=.
 - Implemented **mock-based tests** for file I/O without touching disk  
 - Improved tests using **parametrization**  
 - Achieved **high test coverage** with meaningful assertions  
+
+
+
+
+# 📅 Overview – Week 5
+
+# 🌐 Inventory Manager – Web API with Flask
+
+A continuation of the Inventory Manager project, this week focuses on exposing our inventory functionality as a **RESTful web API** using the **Flask** framework.
+
+---
+
+## 📌 Goals
+- Understand HTTP fundamentals and REST API principles.
+- Use Flask Blueprints to structure API endpoints.
+- Implement **CRUD** operations:
+  - Create (`POST`)
+  - Read (`GET`)
+  - Update (`PUT`)
+- Validate request data using **Pydantic**.
+- Write **integration tests** with pytest and Flask’s test client.
+
+---
+
+## 🗓️ Daily Breakdown
+
+### ✅ Day 1 – Intro to APIs & Flask
+- Learned the request–response cycle and key HTTP verbs.
+- Built a minimal `Hello, World!` Flask app.
+- Tested using Postman / Thunder Client.
+
+### ✅ Day 2 – Project Structure with Blueprints
+- Avoided a monolithic `app.py` by introducing **Blueprints**.
+- Created an `api` blueprint for product endpoints.
+- Integrated the existing **inventory_manager** package as the business logic layer.
+
+### ✅ Day 3 – Read Endpoints
+- `GET /api/products` → List all products (JSON).
+- `GET /api/products/<product_id>` → Single product details or `404`.
+
+### ✅ Day 4 – Create & Update Endpoints
+- `POST /api/products` → Validate JSON body, create product, return `201`.
+- `PUT /api/products/<product_id>` → Validate JSON body, update product.
+
+### ✅ Day 5 – Integration Testing
+- Configured **Flask test client** for pytest.
+- Wrote request-based tests for all CRUD endpoints in `week_5/tests/test_api_integration.py`.
+
+---
+
+## 📂 Project Structure (Week-5)
+```
+week_5/
+├── api/
+│ ├── init.py
+│ ├── app.py # Flask app factory
+│ └── routes/
+│ ├── init.py
+│ └── products.py # CRUD endpoints
+├── tests/
+│ └── test_api_integration.py
+└── Day_1/
+└── hello.py # Initial Hello World app
+```
+
+## 🧪 Key Learnings
+- How a REST API differs from a traditional web app.
+- Proper use of HTTP verbs and status codes.
+- Benefits of Flask Blueprints for modularity.
+- Difference between **unit tests** and **integration tests**.
+
+---
+
+## 🚀 End-of-Week Achievements
+- Functional Flask API with CRUD endpoints.
+- Validation integrated using Pydantic.
+- Integration test coverage for all routes.
+- Clean, modular API design following REST best practices.
