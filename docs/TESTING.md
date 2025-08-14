@@ -60,3 +60,24 @@ tests/
 - Mock-based tests for file I/O without touching the filesystem
 - Parametrization reduced test duplication
 - High coverage with meaningful assertions
+
+
+## Week 5 – Integration Testing
+
+### Overview
+- Used **Flask test client** with pytest for end-to-end request validation.
+- No mocking of business logic — real `Inventory` class used.
+
+### Test Coverage
+- `GET /api/products` – Returns list of products.
+- `GET /api/products/<id>` – Returns product details or `404`.
+- `POST /api/products` – Creates product, returns `201`.
+- `PUT /api/products/<id>` – Updates product.
+
+### Tools
+| Tool         | Purpose                  |
+|--------------|--------------------------|
+| Flask        | Web API framework        |
+| pytest       | Testing framework        |
+| pytest-cov   | Coverage reports         |
+| pydantic     | Validation               |
