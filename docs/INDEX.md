@@ -1,12 +1,12 @@
-## 📅 Overview Week - 1
+## Overview Week - 1
 
-# 📦 Inventory Manager
+# Inventory Manager
 
 A beginner-friendly Python project to practice Git workflows, environment setup, and core Python programming concepts, including data structures, procedural programming, error handling, and data validation using Pydantic.
 
 ---
 
-## 🐍 Python Concepts Practiced
+## Python Concepts Practiced
 
 - Virtual environments (`venv`)
 - The Zen of Python (`import this`)
@@ -16,13 +16,13 @@ A beginner-friendly Python project to practice Git workflows, environment setup,
 - Pull Request (PR) workflow for team collaboration
 
 
-## 📅 Overview Week - 2
+## Overview Week - 2
 
 This week focused on mastering core Python data structures and procedural programming techniques, culminating in a real-world command-line tool to process inventory data from a CSV file.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 ```
 inventory-manager/
 ├── .gitignore
@@ -53,9 +53,9 @@ inventory-manager/
 
 ---
 
-## 💻 How to Set Up & Run
+## How to Set Up & Run
 
-### 🧪 1. Clone the Repository
+### 1. Clone the Repository
 
 ```bash
 git clone <your-repo-url>
@@ -73,17 +73,17 @@ source venv/bin/activate
 # (On Windows)
 venv\Scripts\activate
 
-# 📦 3. Install Dependencies
+# 3. Install Dependencies
 pip install pydantic
 
 
-# 🚀 How to Run the Project
+# How to Run the Project
 python process_inventory.py
 ```
 
-## 🗓️ Daily Topics & Learnings
+## Daily Topics & Learnings
 
-### ✅ Day 1: Lists & Tuples
+### Day 1: Lists & Tuples
 
 - **Lists**: Creation, indexing, slicing, appending, and removing elements.
   - Common methods: `.append()`, `.extend()`, `.pop()`, `.sort()`
@@ -94,7 +94,7 @@ python process_inventory.py
 
 ---
 
-### ✅ Day 2: Dictionaries & Sets
+### Day 2: Dictionaries & Sets
 
 - **Dictionaries**: Key-value pairs, creation, accessing, updating.
   - Iteration with `.keys()`, `.values()`, `.items()`
@@ -106,7 +106,7 @@ python process_inventory.py
 
 ---
 
-### ✅ Day 3: Control Flow & Functions
+### Day 3: Control Flow & Functions
 
 - **Control Flow**: `if`, `elif`, `else`, `for`, `while`
 - **Functions**:
@@ -117,7 +117,7 @@ python process_inventory.py
 
 ---
 
-### ✅ Day 4: File I/O & `csv` Module
+### Day 4: File I/O & `csv` Module
 
 - **File Handling**: Using `with open(...) as f:` for reading/writing plain text
 - **CSV Handling**:
@@ -127,7 +127,7 @@ python process_inventory.py
 
 ---
 
-### ✅ Day 5: Error Handling & Data Validation with Pydantic
+### Day 5: Error Handling & Data Validation with Pydantic
 
 - **Error Handling**:
   - `try...except`
@@ -140,7 +140,7 @@ python process_inventory.py
 
 ---
 
-## 🧪 Daily Drills
+## Daily Drills
 
 1. **Remove duplicates from a list** using `set()`
 2. **Convert list of tuples into a dictionary**:
@@ -148,19 +148,19 @@ python process_inventory.py
    dict([("Alice", 80), ("Bob", 90)])
 
 
-# 🧱 Inventory Manager – Week 3
+# Inventory Manager – Week 3
 
 A continuation of the inventory processor project, this week applies **Object-Oriented Programming (OOP)** principles and project structuring best practices. The goal is to transform procedural code into a clean, modular, and extensible Python package.
 
 ---
 
-## 📅 Overview – Week 3
+## Overview – Week 3
 
 This week focused on understanding and applying Object-Oriented Programming (OOP) concepts to refactor the inventory tool built in Week 2. By organizing code into classes and separating concerns, the project becomes easier to maintain, test, and extend.
 
 ---
 
-## 🏗️ Project Structure for Week-3 (OOP Version)
+## Project Structure for Week-3 (OOP Version)
 
 ```
 week_3/
@@ -180,36 +180,36 @@ week_3/
 
   ```
 
-## 💻 How to Set Up & Run
+## How to Set Up & Run
 
-### 🔧 1. Clone the Repository
+### 1. Clone the Repository
 ```bash
 git clone <your-repo-url>
 cd inventory-manager
 
-# 🧪 2. Set Up Virtual Environment
+# 2. Set Up Virtual Environment
 virtualenv venv
 source venv/bin/activate      # Linux/macOS
 venv\Scripts\activate         # Windows
 
-#📦 3. Install Dependencies
+# 3. Install Dependencies
 pip install -r requirements.txt
 
-# 🚀 How to Run the Project
+# How to Run the Project
 python main.py
 ```
 
-📌 Key Concepts Practiced
+Key Concepts Practiced
 ```
-🧱 Object-Oriented Programming (OOP)
+Object-Oriented Programming (OOP)
 
-✅ SRP & OCP principles (Clean Code)
+SRP & OCP principles (Clean Code)
 
-🧪 Data validation with Pydantic
+Data validation with Pydantic
 
-📁 Modular Python package design
+Modular Python package design
 
-🧼 Code quality tools: Black and Ruff
+Code quality tools: Black and Ruff
 ```
 
 🧪 Tools Used
@@ -232,7 +232,7 @@ ruff .
 
 [![Coverage Status](https://img.shields.io/badge/coverage-97%25-brightgreen)](https://pytest-cov.readthedocs.io/)
 
-## 📌 Overview
+## Overview
 This week’s goal was to build strong **Test-Driven Development (TDD)** skills using **pytest**.  
 The focus was on:
 - Writing tests before implementation (**Red-Green-Refactor** cycle)
@@ -245,7 +245,7 @@ By the end of the week, I developed a **comprehensive test suite** for the `inve
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 ```
 inventory-manager/
 │
@@ -270,25 +270,25 @@ inventory-manager/
 
 ## ⚙️ How to Set Up & Run
 
-### 1️⃣ Create and activate a virtual environment
+### 1. Create and activate a virtual environment
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Linux/Mac
 venv\Scripts\activate     # On Windows
 
-2️⃣ Install dependencies
+2. Install dependencies
 pip install -r requirements.txt
 
 
-3️⃣ Run tests
+3. Run tests
 pytest
 
 
-4️⃣ Run tests with coverage report
+4. Run tests with coverage report
 pytest --cov=.
 ```
 
-## 📚 Key Concepts Practiced
+## Key Concepts Practiced
 
 ### 1. TDD (Test-Driven Development)
 **Red–Green–Refactor** approach:
@@ -315,7 +315,7 @@ pytest --cov=.
 
 ---
 
-## 🛠 Tools Used
+## Tools Used
 - **Python 3.10+**
 - `pytest` – Test framework  
 - `pytest-mock` – Mocking/patching support  
@@ -325,7 +325,7 @@ pytest --cov=.
 
 ---
 
-## 🚀 End-of-Week Achievements
+## End-of-Week Achievements
 - Built a full-featured **test suite** for `inventory_manager`  
 - Practiced **TDD** by adding a new `get_inventory_value()` method  
 - Implemented **mock-based tests** for file I/O without touching disk  
@@ -335,15 +335,15 @@ pytest --cov=.
 
 
 
-# 📅 Overview – Week 5
+# Overview – Week 5
 
-# 🌐 Inventory Manager – Web API with Flask
+# Inventory Manager – Web API with Flask
 
 A continuation of the Inventory Manager project, this week focuses on exposing our inventory functionality as a **RESTful web API** using the **Flask** framework.
 
 ---
 
-## 📌 Goals
+## Goals
 - Understand HTTP fundamentals and REST API principles.
 - Use Flask Blueprints to structure API endpoints.
 - Implement **CRUD** operations:
@@ -355,27 +355,27 @@ A continuation of the Inventory Manager project, this week focuses on exposing o
 
 ---
 
-## 🗓️ Daily Breakdown
+## Daily Breakdown
 
-### ✅ Day 1 – Intro to APIs & Flask
+### Day 1 – Intro to APIs & Flask
 - Learned the request–response cycle and key HTTP verbs.
 - Built a minimal `Hello, World!` Flask app.
 - Tested using Postman / Thunder Client.
 
-### ✅ Day 2 – Project Structure with Blueprints
+### Day 2 – Project Structure with Blueprints
 - Avoided a monolithic `app.py` by introducing **Blueprints**.
 - Created an `api` blueprint for product endpoints.
 - Integrated the existing **inventory_manager** package as the business logic layer.
 
-### ✅ Day 3 – Read Endpoints
+### Day 3 – Read Endpoints
 - `GET /api/products` → List all products (JSON).
 - `GET /api/products/<product_id>` → Single product details or `404`.
 
-### ✅ Day 4 – Create & Update Endpoints
+### Day 4 – Create & Update Endpoints
 - `POST /api/products` → Validate JSON body, create product, return `201`.
 - `PUT /api/products/<product_id>` → Validate JSON body, update product.
 
-### ✅ Day 5 – Integration Testing
+### Day 5 – Integration Testing
 
 [![Coverage Status](https://img.shields.io/badge/coverage-98%25-brightgreen)](https://pytest-cov.readthedocs.io/)
 
@@ -384,7 +384,7 @@ A continuation of the Inventory Manager project, this week focuses on exposing o
 
 ---
 
-## 📂 Project Structure (Week-5)
+## Project Structure (Week-5)
 ```
 week_5/
 ├── api/
@@ -399,7 +399,7 @@ week_5/
 └── hello.py # Initial Hello World app
 ```
 
-## 🧪 Key Learnings
+## Key Learnings
 - How a REST API differs from a traditional web app.
 - Proper use of HTTP verbs and status codes.
 - Benefits of Flask Blueprints for modularity.
@@ -407,7 +407,7 @@ week_5/
 
 ---
 
-## 🚀 End-of-Week Achievements
+## End-of-Week Achievements
 - Functional Flask API with CRUD endpoints.
 - Validation integrated using Pydantic.
 - Integration test coverage for all routes.

@@ -1,4 +1,4 @@
-# 🏗️ Project Architecture
+# Project Architecture
 
 ## Overview
 The **Inventory Manager** project follows a progressive design:
