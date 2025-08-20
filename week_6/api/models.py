@@ -3,15 +3,14 @@
 from datetime import date
 from typing import Optional, Union
 from .db import db
-
+from sqlalchemy import CheckConstraint
 
 class Product(db.Model):
     """SQLAlchemy model representing a product in the inventory."""
 
     __tablename__ = "products"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    product_id = db.Column(db.String(64), unique=True, nullable=False)
+    product_id = db.Column(db.Integer, primary_key=True, nullable=False)
     product_name = db.Column(db.String(256), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -20,6 +19,10 @@ class Product(db.Model):
     warranty_period = db.Column(db.Integer, nullable=True)
     author = db.Column(db.String(256), nullable=True)
     pages = db.Column(db.Integer, nullable=True)
+
+    __table_args__ = (
+        CheckConstraint('product_id > 0', name='check_product_id_positive'),
+    )
 
     def __repr__(self) -> str:
         """String representation of the product."""
@@ -32,7 +35,7 @@ class Product(db.Model):
             dict[str, str | int | float | None]: Dictionary representation of product.
         """
         return {
-            "product_id": str(self.product_id),
+            "product_id": self.product_id,
             "product_name": str(self.product_name),
             "quantity": self.quantity,
             "price": float(self.price),

@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 class ProductBase(BaseModel):
     """Base schema shared by all product types."""
 
-    product_id: str = Field(..., description="Unique external ID of product")
+    product_id: int = Field(..., gt=0, description="Unique external ID of product")
     product_name: str = Field(..., description="Name of the product")
     quantity: int = Field(..., ge=0, description="Quantity in stock")
     price: float = Field(..., gt=0, description="Price of the product")

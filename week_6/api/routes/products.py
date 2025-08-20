@@ -36,8 +36,8 @@ def get_products() -> tuple[Response, int]:
     return jsonify([ProductResponse.model_validate(p).model_dump() for p in products]), 200
 
 
-@api_bp.route("/products/<string:product_id>", methods=["GET"])
-def get_product(product_id: str) -> tuple[Response, int]:
+@api_bp.route("/products/<int:product_id>", methods=["GET"])
+def get_product(product_id: int) -> tuple[Response, int]:
     """Fetch a single product by product_id."""
     product: Product | None = Product.query.filter_by(product_id=product_id).first()
     if not product:
@@ -73,8 +73,8 @@ def create_product() -> tuple[Response, int]:
     return jsonify(ProductResponse.model_validate(product).model_dump()), 201
 
 
-@api_bp.route("/products/<string:product_id>", methods=["PUT"])
-def update_product(product_id: str) -> tuple[Response, int]:
+@api_bp.route("/products/<int:product_id>", methods=["PUT"])
+def update_product(product_id: int) -> tuple[Response, int]:
     """Update an existing product."""
     data: dict[str, Any] | None = request.get_json(force=True, silent=True)
     if not data:
@@ -102,8 +102,8 @@ def update_product(product_id: str) -> tuple[Response, int]:
     return jsonify(ProductResponse.model_validate(product).model_dump()), 200
 
 
-@api_bp.route("/products/<string:product_id>", methods=["DELETE"])
-def delete_product(product_id: str) -> tuple[str | Response, int]:
+@api_bp.route("/products/<int:product_id>", methods=["DELETE"])
+def delete_product(product_id: int) -> tuple[str | Response, int]:
     """Delete a product."""
     product: Product | None = Product.query.filter_by(product_id=product_id).first()
     if not product:
