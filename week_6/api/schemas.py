@@ -5,9 +5,6 @@ from datetime import date
 from pydantic import BaseModel, Field
 
 
-# --------------------
-# Base Schemas
-# --------------------
 class ProductBase(BaseModel):
     """Base schema shared by all product types."""
 
@@ -20,9 +17,6 @@ class ProductBase(BaseModel):
     )
 
 
-# --------------------
-# Request Models (Create)
-# --------------------
 class FoodProductCreate(ProductBase):
     """Schema for creating a food product."""
 
@@ -51,9 +45,6 @@ class GenericProductCreate(ProductBase):
     type: str = ""
 
 
-# --------------------
-# Request Model (Update / PUT)
-# --------------------
 class ProductUpdate(BaseModel):
     """Schema for updating a product (partial updates allowed)."""
 
@@ -67,9 +58,6 @@ class ProductUpdate(BaseModel):
     pages: Optional[int] = Field(None, ge=1)
 
 
-# --------------------
-# Response Model
-# --------------------
 class ProductResponse(ProductBase):
     """Standard response model returned by API."""
 

@@ -21,11 +21,11 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
     Returns:
         Flask: The configured Flask application instance.
     """
-    app = Flask(__name__)
+    app: Flask = Flask(__name__)
 
     # sensible defaults
     app.config.setdefault("SQLALCHEMY_TRACK_MODIFICATIONS", False)
-    env_db = os.getenv("DATABASE_URL")
+    env_db: Optional[str] = os.getenv("DATABASE_URL")
     if env_db:
         app.config.setdefault("SQLALCHEMY_DATABASE_URI", env_db)
 

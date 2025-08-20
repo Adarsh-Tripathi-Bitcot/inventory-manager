@@ -3,8 +3,9 @@
 import csv
 import os
 import click
+from typing import Type
 from flask.cli import with_appcontext
-from pydantic import ValidationError
+from pydantic import ValidationError, BaseModel
 
 from .db import db
 from .models import Product
@@ -15,40 +16,31 @@ from .schemas import (
     BookProductCreate,
 )
 
-CSV_PATH = os.path.join(os.getcwd(), "data", "products.csv")
+CSV_PATH: str = os.path.join(os.getcwd(), "data", "products.csv")
 
 
 @click.command("seed-db")
 @with_appcontext
 def seed_db() -> None:
-    """Seed the database with products from CSV.
-
-    Reads `data/products.csv`, validates rows using Pydantic schemas,
-    and inserts them into the database if not already present.
-
-    Logs validation errors to `errors.log`.
-
-    Returns:
-        None
-    """
+    """Seed the database with products from CSV."""
     if not os.path.exists(CSV_PATH):
         click.echo(f"CSV file not found at {CSV_PATH}")
         return
 
-    added = 0
-    skipped = 0
+    added: int = 0
+    skipped: int = 0
     with open(CSV_PATH, newline="", encoding="utf-8") as fh:
-        reader = csv.DictReader(fh)
+        reader: csv.DictReader[str] = csv.DictReader(fh)
         for row in reader:
-            type_value = (row.get("type") or row.get("category") or "").strip().lower()
-            schema_cls = {
+            type_value: str = (row.get("type") or row.get("category") or "").strip().lower()
+            schema_cls: Type[BaseModel] = {
                 "food": FoodProductCreate,
                 "electronic": ElectronicProductCreate,
                 "book": BookProductCreate,
             }.get(type_value, ProductBase)
 
             try:
-                validated = schema_cls(**row)
+                validated: BaseModel = schema_cls(**row)
             except ValidationError as e:
                 with open("errors.log", "a", encoding="utf-8") as ef:
                     ef.write(f"Row {row} validation error: {e}\n")
@@ -59,7 +51,7 @@ def seed_db() -> None:
                 skipped += 1
                 continue
 
-            p = Product(
+            p: Product = Product(
                 product_id=validated.product_id,
                 product_name=validated.product_name,
                 quantity=validated.quantity,

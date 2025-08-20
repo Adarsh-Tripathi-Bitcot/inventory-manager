@@ -1,32 +1,17 @@
 """Database models for the Inventory API."""
 
 from datetime import date
-from typing import Optional
+from typing import Optional, Union
 from .db import db
 
 
 class Product(db.Model):
-    """SQLAlchemy model representing a product in the inventory.
-
-    Attributes:
-        id (int): Auto-incrementing primary key.
-        product_id (str): External unique identifier for the product.
-        product_name (str): Human-readable name of the product.
-        quantity (int): Available stock quantity.
-        price (float): Price of the product.
-        type (Optional[str]): Product type ("food", "electronic", "book").
-        expiry_date (Optional[date]): Expiry date (for food products).
-        warranty_period (Optional[int]): Warranty period in months (for electronics).
-        author (Optional[str]): Author name (for books).
-        pages (Optional[int]): Number of pages (for books).
-    """
+    """SQLAlchemy model representing a product in the inventory."""
 
     __tablename__ = "products"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    product_id = db.Column(
-        db.String(64), unique=True, nullable=False
-    )  # external id used in API URLs
+    product_id = db.Column(db.String(64), unique=True, nullable=False)
     product_name = db.Column(db.String(256), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -40,7 +25,7 @@ class Product(db.Model):
         """String representation of the product."""
         return f"<Product {self.product_id} {self.product_name}>"
 
-    def to_dict(self) -> dict[str, str | int | float | None]:
+    def to_dict(self) -> dict[str, Union[str, int, float, None]]:
         """Convert product instance into a JSON-serializable dictionary.
 
         Returns:
