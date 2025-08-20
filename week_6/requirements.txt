@@ -1,0 +1,9 @@
+Flask
+Flask-SQLAlchemy        # wrapper for SQLAlchemy
+SQLAlchemy
+Flask-Migrate
+psycopg2-binary              # Postgres DB driver
+pydantic
+python-dotenv                # optional, for .env config
+pytest
+pytest-flask
