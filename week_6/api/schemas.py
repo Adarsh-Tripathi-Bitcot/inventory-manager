@@ -4,7 +4,6 @@ from typing import Optional
 from datetime import date
 from pydantic import BaseModel, Field
 
-
 class ProductBase(BaseModel):
     """Base schema shared by all product types."""
 
@@ -12,10 +11,10 @@ class ProductBase(BaseModel):
     product_name: str = Field(..., description="Name of the product")
     quantity: int = Field(..., ge=0, description="Quantity in stock")
     price: float = Field(..., gt=0, description="Price of the product")
-    type: str = Field(
-        "", description="Type of product: 'food', 'electronic', 'book' or '' (generic)"
+    type: Optional[str] = Field(
+        "",
+        description="Type of product: 'food', 'electronic', 'book' or '' (generic)"
     )
-
 
 class FoodProductCreate(ProductBase):
     """Schema for creating a food product."""
@@ -59,15 +58,14 @@ class ProductUpdate(BaseModel):
 
 
 class ProductResponse(ProductBase):
-    """Standard response model returned by API."""
-
-    id: int
+    """
+    Standard response model returned by API.
+    Mirrors DB record + type-specific fields.
+    """
     expiry_date: Optional[date] = None
     warranty_period: Optional[int] = None
     author: Optional[str] = None
     pages: Optional[int] = None
 
     class Config:
-        """Configuration for ORM compatibility."""
-
-        from_attributes = True
+        from_attributes = True  # ORM objects -> Pydantic model
