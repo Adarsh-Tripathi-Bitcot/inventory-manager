@@ -1,6 +1,6 @@
 """Product-related API routes."""
 
-from typing import Type, Any
+from typing import Type, Any, Tuple
 from flask import Blueprint, request, jsonify, Response
 from sqlalchemy.exc import SQLAlchemyError
 from pydantic import ValidationError, BaseModel
@@ -20,7 +20,14 @@ api_bp: Blueprint = Blueprint("api", __name__, url_prefix="/api")
 
 
 def _choose_create_schema(product_type: str) -> Type[BaseModel]:
-    """Return correct Pydantic schema based on product type."""
+    """Return correct Pydantic schema based on product type.
+
+    Args:
+        product_type (str): Type of the product ("food", "electronic", "book").
+
+    Returns:
+        Type[BaseModel]: Corresponding Pydantic request model.
+    """
     type_map: dict[str, Type[BaseModel]] = {
         "food": FoodProductCreate,
         "electronic": ElectronicProductCreate,
@@ -30,15 +37,15 @@ def _choose_create_schema(product_type: str) -> Type[BaseModel]:
 
 
 @api_bp.route("/products", methods=["GET"])
-def get_products() -> tuple[Response, int]:
+def get_products() -> Tuple[Response, int]:
     """Fetch all products."""
     products: list[Product] = Product.query.all()
     return jsonify([ProductResponse.model_validate(p).model_dump() for p in products]), 200
 
 
 @api_bp.route("/products/<int:product_id>", methods=["GET"])
-def get_product(product_id: int) -> tuple[Response, int]:
-    """Fetch a single product by product_id."""
+def get_product(product_id: int) -> Tuple[Response, int]:
+    """Fetch a single product by ID."""
     product: Product | None = Product.query.filter_by(product_id=product_id).first()
     if not product:
         return jsonify({"error": "Product not found"}), 404
@@ -46,7 +53,7 @@ def get_product(product_id: int) -> tuple[Response, int]:
 
 
 @api_bp.route("/products", methods=["POST"])
-def create_product() -> tuple[Response, int]:
+def create_product() -> Tuple[Response, int]:
     """Create a new product."""
     data: dict[str, Any] | None = request.get_json(force=True, silent=True)
     if not data:
@@ -74,7 +81,7 @@ def create_product() -> tuple[Response, int]:
 
 
 @api_bp.route("/products/<int:product_id>", methods=["PUT"])
-def update_product(product_id: int) -> tuple[Response, int]:
+def update_product(product_id: int) -> Tuple[Response, int]:
     """Update an existing product."""
     data: dict[str, Any] | None = request.get_json(force=True, silent=True)
     if not data:
@@ -103,7 +110,7 @@ def update_product(product_id: int) -> tuple[Response, int]:
 
 
 @api_bp.route("/products/<int:product_id>", methods=["DELETE"])
-def delete_product(product_id: int) -> tuple[str | Response, int]:
+def delete_product(product_id: int) -> Tuple[str | Response, int]:
     """Delete a product."""
     product: Product | None = Product.query.filter_by(product_id=product_id).first()
     if not product:

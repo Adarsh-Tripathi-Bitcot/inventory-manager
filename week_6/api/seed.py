@@ -2,19 +2,14 @@
 
 import csv
 import os
-import click
 from typing import Type
+import click
 from flask.cli import with_appcontext
 from pydantic import ValidationError, BaseModel
 
 from .db import db
 from .models import Product
-from .schemas import (
-    ProductBase,
-    FoodProductCreate,
-    ElectronicProductCreate,
-    BookProductCreate,
-)
+from .schemas import ProductBase, FoodProductCreate, ElectronicProductCreate, BookProductCreate
 
 CSV_PATH: str = os.path.join(os.getcwd(), "data", "products.csv")
 
@@ -22,7 +17,11 @@ CSV_PATH: str = os.path.join(os.getcwd(), "data", "products.csv")
 @click.command("seed-db")
 @with_appcontext
 def seed_db() -> None:
-    """Seed the database with products from CSV."""
+    """Seed the database with products from CSV file.
+
+    Skips rows with validation errors or duplicates.
+    Outputs summary of added/skipped rows.
+    """
     if not os.path.exists(CSV_PATH):
         click.echo(f"CSV file not found at {CSV_PATH}")
         return
@@ -51,7 +50,7 @@ def seed_db() -> None:
                 skipped += 1
                 continue
 
-            p: Product = Product(
+            product: Product = Product(
                 product_id=validated.product_id,
                 product_name=validated.product_name,
                 quantity=validated.quantity,
@@ -62,7 +61,7 @@ def seed_db() -> None:
                 author=getattr(validated, "author", None),
                 pages=getattr(validated, "pages", None),
             )
-            db.session.add(p)
+            db.session.add(product)
             added += 1
 
         db.session.commit()

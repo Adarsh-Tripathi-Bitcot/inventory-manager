@@ -5,7 +5,6 @@ from typing import Optional, Dict, Any
 import os
 
 from flask import Flask
-
 from .db import db, migrate
 from .routes import api_bp
 from .config import get_config
@@ -25,11 +24,12 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
 
     # sensible defaults
     app.config.setdefault("SQLALCHEMY_TRACK_MODIFICATIONS", False)
+
     env_db: Optional[str] = os.getenv("DATABASE_URL")
     if env_db:
         app.config.setdefault("SQLALCHEMY_DATABASE_URI", env_db)
 
-    # Allow callers (tests) to override config by passing a dict
+    # allow config override
     if config:
         app.config.update(config)
 
@@ -41,10 +41,11 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
 
     migrate.init_app(app, db)
 
+    # register blueprint
     app.register_blueprint(api_bp)
 
     # CLI command seed-db
-    from .seed import seed_db
+    from .seed import seed_db  # noqa: F401
     app.cli.add_command(seed_db)
 
     return app

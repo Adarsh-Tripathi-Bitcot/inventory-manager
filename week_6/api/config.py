@@ -1,14 +1,10 @@
-"""Configuration management for the Inventory API.
-
-Provides configuration classes for different environments (development, testing).
-Supports loading environment variables from a `.env` file.
-"""
+"""Configuration management for the Inventory API."""
 
 import os
 from dotenv import load_dotenv
-from typing import Type
+from typing import Type, Optional
 
-load_dotenv()  # loads .env in project root if present
+load_dotenv()  # Load .env file in project root
 
 
 class BaseConfig:
@@ -20,7 +16,7 @@ class BaseConfig:
 class DevConfig(BaseConfig):
     """Development configuration using DATABASE_URL from environment."""
 
-    SQLALCHEMY_DATABASE_URI: str | None = os.getenv("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI: Optional[str] = os.getenv("DATABASE_URL")
 
 
 class TestConfig(BaseConfig):
@@ -37,15 +33,15 @@ config_map: dict[str, Type[BaseConfig]] = {
 }
 
 
-def get_config(name: str | None = None) -> Type[BaseConfig]:
-    """Return a config class based on name.
+def get_config(name: Optional[str] = None) -> Type[BaseConfig]:
+    """Return a configuration class based on name.
 
     Args:
-        name (str | None): Name of the config ("default" or "testing").
+        name (Optional[str]): Name of config ("default" or "testing").
             If None or invalid, defaults to DevConfig.
 
     Returns:
-        Type[BaseConfig]: A configuration class.
+        Type[BaseConfig]: Selected configuration class.
     """
     if name and name in config_map:
         return config_map[name]
