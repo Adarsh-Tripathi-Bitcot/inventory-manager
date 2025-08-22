@@ -5,6 +5,8 @@ The **Inventory Manager** project follows a progressive design:
 1. Week 2 – Procedural script.
 2. Week 3 – Object-Oriented, modular package.
 3. Week 4 – Test-driven development with high coverage.
+4. Week 5 – RESTful API using Flask.
+5. Week 6 – Flask API integrated with PostgreSQL for persistent storage.
 
 ---
 
@@ -16,15 +18,10 @@ inventory-manager/
 │   ├── INDEX.md
 │   ├── SETUP.md
 │   └── TESTING.md
+├── errors.log
+├── low_stock_report.txt
 ├── pytest.ini
 ├── README.md
-├── setup.cfg
-├── tests
-│   ├── conftest.py
-│   ├── requirements.txt
-│   ├── test_core.py
-│   ├── test_models_fixture.py
-│   ├── test_models.py
 ├── week_1
 │   ├── f_principle.py
 │   └── practice.py
@@ -51,28 +48,69 @@ inventory-manager/
 ├── week_3
 │   ├── data
 │   │   └── products.csv
+│   ├── errors.log
 │   ├── inventory_manager
 │   │   ├── core.py
 │   │   ├── __init__.py
 │   │   ├── models.py
+│   │   ├── __pycache__
 │   │   └── utils.py
+│   ├── low_stock_report.txt
 │   ├── main.py
+│   ├── __pycache__/
 │   ├── pyproject.toml
 │   ├── requirements.txt
-└── week_5
-    ├── api
+├── week_4
+│   └── tests
+│       ├── conftest.py
+│       ├── errors.log
+│       ├── __pycache__
+│       ├── requirements.txt
+│       ├── test_core.py
+│       ├── test_models_fixture.py
+│       ├── test_models.py
+│       └── venv
+├── week_5
+│   ├── api
+│   │   ├── app.py
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   └── routes
+│   ├── Day_1
+│   │   └── hello.py
+│   ├── __pycache__/
+│   ├── requirements.txt
+│   ├── tests
+│   │   └── test_api_integration.py
+└── week_6
+    ├── api/
     │   ├── app.py
+    │   ├── config.py
+    │   ├── db.py
     │   ├── __init__.py
+    │   ├── models.py
     │   ├── __pycache__
-    │   └── routes
-    │       ├── __init__.py
-    │       ├── products.py
-    ├── Day_1
-    │   └── hello.py
+    │   ├── request_model.py
+    │   ├── response_model.py
+    │   ├── routes
+    │   ├── schemas.py
+    │   └── seed.py
+    ├── data
+    │   └── products.csv
+    ├── __init__.py
+    ├── migrations/
+    ├── __pycache__/
     ├── requirements.txt
     ├── tests
+    │   ├── conftest.py
+    │   ├── __init__.py
     │   ├── __pycache__
-    │   └── test_api_integration.py
+    │   ├── test_app.py
+    │   ├── test_config.py
+    │   ├── test_models.py
+    │   ├── test_request_response_models.py
+    │   ├── test_routes.py
+    │   └── test_seed.py
 ```
 
 
