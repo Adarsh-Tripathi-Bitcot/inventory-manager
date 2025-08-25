@@ -1,24 +1,46 @@
-# week_6_and_7/api/routes/auth_routes.py
 from flask import Blueprint, request, jsonify
 from ..models import db, User
+from pydantic import BaseModel, EmailStr, ValidationError
+from typing import Any, Dict
 
 auth_bp = Blueprint("auth", __name__)
 
+class RegisterRequest(BaseModel):
+    """
+    Schema for user registration request using Pydantic.
+
+    Attributes:
+        username (str): The desired username of the user.
+        email (EmailStr): The email address of the user.
+        password (str): The password chosen by the user.
+    """
+    username: str
+    email: EmailStr
+    password: str
+
 @auth_bp.route("/register", methods=["POST"])
-def register():
-    data = request.get_json()
-    username = data.get("username")
-    email = data.get("email")
-    password = data.get("password")
+def register() -> tuple[Dict[str, Any], int]:
+    """
+    Handle user registration.
 
-    if not username or not email or not password:
-        return jsonify({"error": "username, email, and password are required"}), 400
+    Returns:
+        tuple: A JSON response and corresponding HTTP status code.
 
-    if User.query.filter((User.username == username) | (User.email == email)).first():
+    Raises:
+        400 Bad Request: If required fields are missing, user already exists,
+                         or if the input format is invalid.
+        201 Created: When the user is successfully registered.
+    """
+    try:
+        data = RegisterRequest(**request.get_json())
+    except ValidationError as e:
+        return jsonify({"error": e.errors()}), 400
+
+    if User.query.filter((User.username == data.username) | (User.email == data.email)).first():
         return jsonify({"error": "User already exists"}), 400
 
-    user = User(username=username, email=email)
-    user.set_password(password)
+    user = User(username=data.username, email=data.email)
+    user.set_password(data.password)
 
     db.session.add(user)
     db.session.commit()
