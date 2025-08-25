@@ -412,3 +412,98 @@ week_5/
 - Validation integrated using Pydantic.
 - Integration test coverage for all routes.
 - Clean, modular API design following REST best practices.
+
+
+# Overview - Week 6
+
+# Week 6: Persistent Data with SQLAlchemy and PostgreSQL
+This week focuses on integrating PostgreSQL with the existing Flask API. The goal was to replace CSV-based storage with a relational database, implement proper CRUD operations, and ensure seamless interaction between Flask routes and the PostgreSQL backend.
+
+
+## Goals
+- Integrate Flask API with PostgreSQL using SQLAlchemy.
+- Validate requests and responses using Pydantic models.
+- Seed DB with CSV without interfering with production data.
+- Implement integration tests for all endpoints.
+- Learn mocking, patching, and test coverage with pytest.
+
+## Project Structure (Week-6)
+```
+week_6/
+├── api/
+│   ├── __init__.py       # Flask app factory + DB initialization
+│   ├── app.py            # Entry point to run the API
+│   ├── config.py         # Config classes (Dev, Test, Prod)
+│   ├── db.py             # PostgreSQL connection setup
+│   ├── models.py         # SQLAlchemy models
+│   ├── request_model.py  # Pydantic request schemas
+│   ├── response_model.py # Pydantic response schemas
+│   ├── schemas.py
+│   ├── seed.py
+│   └── routes/
+│       ├── __init__.py
+│       └── products.py   # CRUD endpoints for products
+│   └── __pycache__/
+│   └── data/
+│       └── products.csv
+│   └── migrations/
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── test_app.py
+│   ├── test_config.py
+│   ├── test_models.py
+│   ├── test_request_response_models.py
+│   ├── test_routes.py
+│   └── test_seed.py
+├── __init__.py
+├── .env
+├── .env.example
+├── requirements.txt
+```
+
+
+
+## Key Concepts Practiced
+- Setting up PostgreSQL locally and creating databases & tables
+- Connecting Flask to PostgreSQL using psycopg2 / SQLAlchemy
+- Implementing CRUD endpoints with database integration
+- Reading environment variables for DB credentials
+- Using Flask app context and connection pooling
+- Writing integration tests against PostgreSQL (without touching production data)
+- Ensuring proper HTTP response codes for API endpoints
+
+## Daily Topics & Learnings
+### Day 1 – PostgreSQL Setup & Database Connection
+- Installed PostgreSQL and created local database
+- Configured Flask to read DB credentials from environment variables
+- Tested DB connection using Python scripts
+
+### Day 2 – SQLAlchemy Models & Pydantic Schemas
+- Defined SQLAlchemy models for products
+- Created Pydantic request and response schemas
+- Learned mapping between relational tables and Python objects
+
+### Day 3 – CRUD Endpoints Integration
+- Implemented GET, POST, PUT routes connected to PostgreSQL
+- Handled proper response codes: 200, 201, 404
+- Added exception handling for DB errors
+
+### Day 4 – Integration Testing
+- Configured test database (separate from dev DB)
+- Wrote tests using Flask test client
+- Ensured data isolation between tests
+- Verified all endpoints return correct status codes and responses
+
+### Day 5 – Refactoring & Code Quality
+- Ensured consistent coding style (Black + Ruff)
+- Applied type hints and docstrings for clarity
+- Ensured test coverage for all API routes >95%
+
+
+## End-of-Week Achievements
+- Fully functional Flask API with PostgreSQL backend
+- CRUD endpoints tested and validated with proper HTTP responses
+- Environment-based configuration for DB credentials
+- Integration tests covering all routes using Flask test client
+- Clean, modular, and production-ready code structure
