@@ -3,8 +3,8 @@
 from datetime import date
 import pytest
 from pydantic import ValidationError
-from week_6.api.request_model import FoodProductCreate, ProductUpdate
-from week_6.api.response_model import ProductResponse
+from week_6_and_7.api.request_model import FoodProductCreate, ProductUpdate
+from week_6_and_7.api.response_model import ProductResponse
 
 
 def test_food_product_create_valid() -> None:

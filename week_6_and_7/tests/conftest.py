@@ -2,8 +2,8 @@
 
 import pytest
 from flask import Flask
-from week_6.api.app import create_app
-from week_6.api.db import db as _db
+from week_6_and_7.api.app import create_app
+from week_6_and_7.api.db import db as _db
 
 
 @pytest.fixture
@@ -44,6 +44,6 @@ def db(app: Flask):
 @pytest.fixture(autouse=True)
 def clear_db(db):
     """Clear Product table before each test."""
-    from api.models import Product
+    from week_6_and_7.api.models import Product
     db.session.query(Product).delete()
     db.session.commit()

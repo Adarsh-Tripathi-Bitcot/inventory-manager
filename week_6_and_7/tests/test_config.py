@@ -1,6 +1,6 @@
 """Tests for configuration management."""
 
-from week_6.api.config import get_config, DevConfig, TestConfig
+from week_6_and_7.api.config import get_config, DevConfig, TestConfig
 
 
 def test_get_config_default() -> None:

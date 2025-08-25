@@ -1,7 +1,7 @@
 """Tests for Flask app creation."""
 
 from flask import Flask
-from week_6.api.app import create_app
+from week_6_and_7.api.app import create_app
 
 
 def test_create_app_uses_env(monkeypatch) -> None:

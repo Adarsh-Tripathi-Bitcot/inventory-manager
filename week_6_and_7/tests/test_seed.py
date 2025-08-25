@@ -2,8 +2,8 @@
 
 import csv
 from click.testing import CliRunner
-from week_6.api.seed import seed_db
-from week_6.api.models import Product
+from week_6_and_7.api.seed import seed_db
+from week_6_and_7.api.models import Product
 
 
 def _write_csv(tmp_path, product_id: int = 1) -> str:
@@ -34,7 +34,7 @@ def test_seed_db_adds_and_skips(monkeypatch, tmp_path, app, db) -> None:
         db.session.commit()
 
     csv_file = _write_csv(tmp_path)
-    monkeypatch.setattr("week_6.api.seed.CSV_PATH", csv_file)
+    monkeypatch.setattr("week_6_and_7.api.seed.CSV_PATH", csv_file)
 
     runner = CliRunner()
     with app.app_context():
@@ -46,7 +46,7 @@ def test_seed_db_adds_and_skips(monkeypatch, tmp_path, app, db) -> None:
 
 def test_seed_db_missing_file(monkeypatch, app) -> None:
     """seed_db should handle missing CSV file gracefully."""
-    monkeypatch.setattr("week_6.api.seed.CSV_PATH", "/nonexistent.csv")
+    monkeypatch.setattr("week_6_and_7.api.seed.CSV_PATH", "/nonexistent.csv")
     runner = CliRunner()
     with app.app_context():
         result = runner.invoke(seed_db)

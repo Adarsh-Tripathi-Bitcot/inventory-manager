@@ -17,6 +17,7 @@ class DevConfig(BaseConfig):
     """Development configuration using DATABASE_URL from environment."""
 
     SQLALCHEMY_DATABASE_URI: Optional[str] = os.getenv("DATABASE_URL")
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "fallback_secret")
 
 
 class TestConfig(BaseConfig):
@@ -25,6 +26,7 @@ class TestConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI: str = os.getenv("TEST_DATABASE_URL") or (
         "postgresql://postgres:postgres@localhost/inventory_test_db"
     )
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "fallback_secret")
 
 
 config_map: dict[str, Type[BaseConfig]] = {
