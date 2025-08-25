@@ -6,7 +6,7 @@ import os
 
 from flask import Flask
 from .db import db, migrate
-from .routes import api_bp, auth_bp  # ✅ Import both blueprints
+from .routes import api_bp, auth_bp
 from .config import get_config
 from .seed import seed_db
 from . import models
@@ -50,7 +50,7 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
 
     # Register blueprints
     app.register_blueprint(api_bp)                 # Existing API routes
-    app.register_blueprint(auth_bp, url_prefix="/auth")  # ✅ Auth routes under /auth
+    app.register_blueprint(auth_bp, url_prefix="/auth")
 
     # CLI command for seeding the database
     app.cli.add_command(seed_db)
