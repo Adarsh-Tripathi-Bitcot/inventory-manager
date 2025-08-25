@@ -81,3 +81,70 @@ tests/
 | pytest       | Testing framework        |
 | pytest-cov   | Coverage reports         |
 | pydantic     | Validation               |
+
+
+
+## Week 6 – Flask + PostgreSQL API Testing
+
+### Overview
+- Focused on unit, integration, and end-to-end tests for a Flask + PostgreSQL API.
+- Added database fixtures and mocking for external dependencies.
+- Covered API, models, request/response schemas, and seeding scripts.
+
+### Test Suite Structure
+```
+week_6/tests/
+├── __init__.py
+├── conftest.py
+├── test_app.py
+├── test_config.py
+├── test_models.py
+├── test_request_response_models.py
+├── test_routes.py
+└── test_seed.py
+```
+
+### Key Practices
+- **Database Fixtures**
+  - Temporary test database using `pytest` fixtures.
+  - Rollback after each test to isolate tests.
+
+- **Mocking External Calls**
+  - Replaced network or file I/O operations to test API endpoints in isolation.
+
+- **Integration Tests**
+  - Verified CRUD endpoints:
+    - `GET /api/products`
+    - `GET /api/products/<id>`
+    - `POST /api/products`
+    - `PUT /api/products/<id>`
+  - Confirmed proper response codes, JSON validation, and DB persistence.
+
+- **Request/Response Model Testing**
+  - Ensured `request_model.py` and `response_model.py` schemas validate payloads correctly.
+
+- **Seed Script Testing**
+  - Verified that `seed.py` populates the DB correctly.
+  - Checked for duplicate handling and data consistency.
+
+### Tools
+| Tool           | Purpose                          |
+|----------------|----------------------------------|
+| Flask          | API framework                    |
+| SQLAlchemy     | ORM for PostgreSQL               |
+| Alembic        | DB migrations                    |
+| psycopg2       | PostgreSQL driver                |
+| pytest         | Test framework                   |
+| pytest-mock    | Mocking support                  |
+| pytest-cov     | Coverage reports                 |
+| pydantic       | Request/response validation      |
+| unittest.mock  | Mocking built-ins                |
+
+### Achievements
+
+- Full coverage of Flask + PostgreSQL API endpoints
+- Isolated database tests using fixtures
+- Mock-based tests for file or network dependencies
+- Validated request/response schemas with Pydantic
+- Ensured seed data scripts work as expected
+- High test coverage and reliable TDD workflow for backend API
