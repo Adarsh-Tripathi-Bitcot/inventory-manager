@@ -1,7 +1,7 @@
 """Tests for SQLAlchemy Product model."""
 
-from week_6.api.models import Product
-from week_6.api.db import db
+from week_6_and_7.api.models import Product
+from week_6_and_7.api.db import db
 
 
 def test_product_repr_and_to_dict(db) -> None:
