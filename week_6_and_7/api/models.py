@@ -5,6 +5,7 @@ from typing import Optional, Union, Dict
 from .db import db
 from sqlalchemy import CheckConstraint
 
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Product(db.Model):
     """SQLAlchemy model representing a product in the inventory."""
@@ -46,3 +47,26 @@ class Product(db.Model):
             "author": self.author if self.author else "",
             "pages": self.pages if self.pages is not None else None,
         }
+
+
+
+class User(db.Model):
+    """SQLAlchemy model representing an application user."""
+
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(512), nullable=False)
+
+    def set_password(self, password: str) -> None:
+        """Hash and set the user's password."""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password: str) -> bool:
+        """Verify the user's password against the stored hash."""
+        return check_password_hash(self.password_hash, password)
+
+    def __repr__(self) -> str:
+        return f"<User {self.username}>"
