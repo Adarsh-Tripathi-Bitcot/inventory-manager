@@ -128,4 +128,4 @@ def delete_product(product_id: int) -> Tuple[str | Response, int]:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-    return "", 204
+    return jsonify({"message": f"Product {product_id} deleted successfully"}), 200

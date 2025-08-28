@@ -3,7 +3,6 @@
 from __future__ import annotations
 from typing import Optional, Dict, Any, Type
 import os
-import logging
 
 from flask import Flask
 from dotenv import load_dotenv
@@ -17,7 +16,7 @@ from .seed import seed_db
 load_dotenv()
 
 # Enable debug logging for JWT issues
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 
 def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
@@ -68,9 +67,5 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
 
     # CLI command seed-db
     app.cli.add_command(seed_db)
-
-    logging.debug(f"JWT_SECRET_KEY loaded: {app.config['JWT_SECRET_KEY']}")
-    logging.debug(f"JWT_ALGORITHM loaded: {app.config['JWT_ALGORITHM']}")
-    logging.debug(f"JWT_EXP_MINUTES loaded: {app.config['JWT_EXP_MINUTES']}")
 
     return app

@@ -1,9 +1,8 @@
 """JWT generation, verification, and refresh token utilities."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta ,timezone
 from functools import wraps
 from typing import Callable, Any, Dict, Optional
-import logging
 
 import jwt
 from flask import current_app, request, jsonify, g
@@ -51,7 +50,7 @@ def create_access_token(user_id: int, expires_in_minutes: Optional[int] = None) 
     if expires_in_minutes is None:
         expires_in_minutes = _get_exp_minutes()
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     payload: Dict[str, Any] = {
         "sub": str(user_id),
         "iat": now,
@@ -59,11 +58,9 @@ def create_access_token(user_id: int, expires_in_minutes: Optional[int] = None) 
     }
     secret = _get_secret()
     alg = _get_algorithm()
-    logging.debug(f"Creating token for user_id={user_id} with secret={secret} and algorithm={alg}")
     token = jwt.encode(payload, secret, algorithm=alg)
     if isinstance(token, bytes):
         token = token.decode("utf-8")
-    logging.debug(f"Token created: {token}")
     return token
 
 
@@ -77,7 +74,7 @@ def create_refresh_token(user_id: int, expires_in_days: int = _DEFAULT_REFRESH_E
     Returns:
         str: Encoded refresh JWT token.
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     payload: Dict[str, Any] = {
         "sub": str(user_id),
         "iat": now,
@@ -86,11 +83,9 @@ def create_refresh_token(user_id: int, expires_in_days: int = _DEFAULT_REFRESH_E
     }
     secret = _get_secret()
     alg = _get_algorithm()
-    logging.debug(f"Creating refresh token for user_id={user_id}")
     token = jwt.encode(payload, secret, algorithm=alg)
     if isinstance(token, bytes):
         token = token.decode("utf-8")
-    logging.debug(f"Refresh token created: {token}")
     return token
 
 
@@ -109,7 +104,6 @@ def decode_access_token(token: str) -> Dict[str, Any]:
     """
     secret = _get_secret()
     alg = _get_algorithm()
-    logging.debug(f"Decoding token with secret={secret} and algorithm={alg}")
     return jwt.decode(token, secret, algorithms=[alg])
 
 
@@ -128,32 +122,24 @@ def jwt_required(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
         auth_header = request.headers.get("Authorization", "")
-        logging.debug(f"Authorization header received: {auth_header}")
 
         if not auth_header.startswith("Bearer "):
-            logging.debug("Authorization header missing or invalid format")
             return jsonify({"error": "Missing or invalid Authorization header"}), 401
 
         token = auth_header.split(" ", 1)[1].strip()
-        logging.debug(f"Extracted token: {token}")
 
         if not token:
-            logging.debug("Token is empty after parsing")
             return jsonify({"error": "Missing token"}), 401
 
         try:
             payload = decode_access_token(token)
-            logging.debug(f"Token payload decoded successfully: {payload}")
             user_id = payload.get("sub")
             if user_id is None:
-                logging.debug("Token payload does not contain user_id")
                 return jsonify({"error": "Invalid token payload"}), 401
             g.current_user_id = int(user_id)
         except jwt.ExpiredSignatureError:
-            logging.debug("Token has expired")
             return jsonify({"error": "Token has expired"}), 401
         except jwt.InvalidTokenError as e:
-            logging.debug(f"Invalid token error: {e}")
             return jsonify({"error": "Invalid token"}), 401
 
         return func(*args, **kwargs)

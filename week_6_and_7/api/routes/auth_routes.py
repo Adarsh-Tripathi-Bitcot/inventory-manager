@@ -2,7 +2,7 @@
 
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
-import logging
+# import logging
 
 from week_6_and_7.api.db import db
 from week_6_and_7.api.models import User
@@ -76,7 +76,7 @@ def login():
 
     access_token = create_access_token(user_id=user.id)
     refresh_token = create_refresh_token(user_id=user.id)
-    logging.debug(f"Login successful. user_id={user.id}, access_token={access_token}, refresh_token={refresh_token}")
+    # logging.debug(f"Login successful. user_id={user.id}, access_token={access_token}, refresh_token={refresh_token}")
     return jsonify({"access_token": access_token, "refresh_token": refresh_token}), 200
 
 
@@ -109,5 +109,5 @@ def refresh_token():
         new_access_token = create_access_token(user_id=int(user_id))
         return jsonify({"access_token": new_access_token}), 200
     except Exception as e:
-        logging.debug(f"Refresh token invalid or expired: {e}")
+        # logging.debug(f"Refresh token invalid or expired: {e}")
         return jsonify({"error": "Invalid or expired refresh token"}), 401
