@@ -2,14 +2,12 @@
 
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
-# import logging
 
 from week_6_and_7.api.db import db
 from week_6_and_7.api.models import User
 from week_6_and_7.api.utils.security import create_access_token, create_refresh_token, decode_access_token, jwt_required
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
-
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
@@ -18,11 +16,9 @@ def register():
     Expected JSON body:
         {
             "username": "<str>",
-            "password": "<str>"
+            "password": "<str>",
+            "role": "<str>"  # optional, defaults to 'staff'
         }
-
-    Returns:
-        JSON response with status code.
     """
     data = request.get_json(force=True, silent=True)
     if not data or "username" not in data or "password" not in data:
@@ -30,6 +26,10 @@ def register():
 
     username = data["username"].strip()
     password = data["password"]
+    role = data.get("role", "staff")  # get role from JSON or default to staff
+
+    if role not in ["admin", "manager", "staff"]:  # validate role
+        return jsonify({"error": "Invalid role"}), 400
 
     if not username or not password:
         return jsonify({"error": "Username and password required"}), 400
@@ -37,7 +37,7 @@ def register():
     if User.query.filter_by(username=username).first():
         return jsonify({"error": "Username already exists"}), 409
 
-    user = User(username=username)
+    user = User(username=username, role=role)  # set role here
     user.set_password(password)
 
     db.session.add(user)
@@ -47,7 +47,7 @@ def register():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-    return jsonify({"message": f"User {user.username} created successfully"}), 201
+    return jsonify({"message": f"User {user.username} created successfully", "role": user.role}), 201
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -74,15 +74,18 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({"error": "Invalid credentials"}), 401
 
-    access_token = create_access_token(user_id=user.id)
-    refresh_token = create_refresh_token(user_id=user.id)
-    # logging.debug(f"Login successful. user_id={user.id}, access_token={access_token}, refresh_token={refresh_token}")
-    return jsonify({"access_token": access_token, "refresh_token": refresh_token}), 200
+    access_token = create_access_token(user_id=user.id, role=user.role)
+    refresh_token = create_refresh_token(user_id=user.id, role=user.role)
 
+    return jsonify({
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "role": user.role
+    }), 200
 
 @auth_bp.route("/refresh", methods=["POST"])
 def refresh_token():
-    """Refresh access token using a valid refresh token.
+    """Refresh access + refresh tokens using a valid refresh token.
 
     Expected JSON body:
         {
@@ -90,7 +93,7 @@ def refresh_token():
         }
 
     Returns:
-        JSON response containing new access token.
+        JSON response containing new access and refresh tokens.
     """
     data = request.get_json(force=True, silent=True)
     if not data or "refresh_token" not in data:
@@ -99,15 +102,26 @@ def refresh_token():
     refresh_token = data["refresh_token"].strip()
     try:
         payload = decode_access_token(refresh_token)
+
+        # Ensure it's a refresh token
         if payload.get("type") != "refresh":
             return jsonify({"error": "Invalid token type"}), 401
 
         user_id = payload.get("sub")
+        role = payload.get("role", "staff")
+
         if user_id is None:
             return jsonify({"error": "Invalid token payload"}), 401
 
-        new_access_token = create_access_token(user_id=int(user_id))
-        return jsonify({"access_token": new_access_token}), 200
+        # Generate new access + refresh tokens
+        new_access_token = create_access_token(user_id=int(user_id), role=role)
+        new_refresh_token = create_refresh_token(user_id=int(user_id), role=role)
+
+        return jsonify({
+            "access_token": new_access_token,
+            "refresh_token": new_refresh_token,
+            "role": role
+        }), 200
+
     except Exception as e:
-        # logging.debug(f"Refresh token invalid or expired: {e}")
         return jsonify({"error": "Invalid or expired refresh token"}), 401

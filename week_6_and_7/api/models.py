@@ -4,7 +4,7 @@ from datetime import date
 from typing import Optional, Union, Dict
 from .db import db
 from sqlalchemy import CheckConstraint
-
+from enum import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Product(db.Model):
@@ -49,6 +49,10 @@ class Product(db.Model):
         }
 
 
+class RoleEnum(str, Enum):
+    ADMIN = "admin"
+    MANAGER = "manager"
+    STAFF = "staff"
 
 class User(db.Model):
     """SQLAlchemy model representing an application user."""
@@ -58,6 +62,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(512), nullable=False)
+    role = db.Column(db.String(20), default=RoleEnum.STAFF.value, nullable=False)
 
     def set_password(self, password: str) -> None:
         """Hash and set the user's password."""
