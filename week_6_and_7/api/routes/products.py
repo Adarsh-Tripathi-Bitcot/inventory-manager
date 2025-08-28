@@ -16,6 +16,8 @@ from ..schemas import (
     ProductResponse,
 )
 
+from ..utils.security import jwt_required
+
 api_bp: Blueprint = Blueprint("api", __name__, url_prefix="/api")
 
 
@@ -53,6 +55,7 @@ def get_product(product_id: int) -> Tuple[Response, int]:
 
 
 @api_bp.route("/products", methods=["POST"])
+@jwt_required
 def create_product() -> Tuple[Response, int]:
     """Create a new product."""
     data: dict[str, Any] | None = request.get_json(force=True, silent=True)
@@ -81,6 +84,7 @@ def create_product() -> Tuple[Response, int]:
 
 
 @api_bp.route("/products/<int:product_id>", methods=["PUT"])
+@jwt_required
 def update_product(product_id: int) -> Tuple[Response, int]:
     """Update an existing product."""
     data: dict[str, Any] | None = request.get_json(force=True, silent=True)
@@ -110,6 +114,7 @@ def update_product(product_id: int) -> Tuple[Response, int]:
 
 
 @api_bp.route("/products/<int:product_id>", methods=["DELETE"])
+@jwt_required
 def delete_product(product_id: int) -> Tuple[str | Response, int]:
     """Delete a product."""
     product: Product | None = Product.query.filter_by(product_id=product_id).first()
@@ -123,4 +128,4 @@ def delete_product(product_id: int) -> Tuple[str | Response, int]:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-    return "", 204
+    return jsonify({"message": f"Product {product_id} deleted successfully"}), 200
