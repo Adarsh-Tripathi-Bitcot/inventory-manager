@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from week_6_and_7.api.db import db
 from week_6_and_7.api.models import User
-from week_6_and_7.api.utils.security import create_access_token, create_refresh_token, decode_access_token, jwt_required
+from week_6_and_7.api.utils.security import create_access_token, create_refresh_token, decode_access_token
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 

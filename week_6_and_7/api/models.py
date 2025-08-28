@@ -3,7 +3,8 @@
 from datetime import date
 from typing import Optional, Union, Dict
 from .db import db
-from sqlalchemy import CheckConstraint
+from sqlalchemy import CheckConstraint, ForeignKey
+from sqlalchemy.orm import relationship
 from enum import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -22,32 +23,30 @@ class Product(db.Model):
     author: Optional[str] = db.Column(db.String(256), nullable=True)
     pages: Optional[int] = db.Column(db.Integer, nullable=True)
 
+    # New field to track ownership
+    created_by = db.Column(db.Integer, ForeignKey("users.id"), nullable=False)
+    owner = relationship("User", backref="products")
+
     __table_args__ = (
         CheckConstraint('product_id > 0', name='check_product_id_positive'),
     )
 
     def __repr__(self) -> str:
-        """Return string representation of the product."""
         return f"<Product {self.product_id} {self.product_name}>"
 
-    def to_dict(self) -> Dict[str, Union[str, int, float, None]]:
-        """Convert product instance into a dictionary suitable for JSON serialization.
-
-        Returns:
-            dict: Dictionary with all product attributes.
-        """
+    def to_dict(self):
         return {
             "product_id": self.product_id,
-            "product_name": str(self.product_name),
+            "product_name": self.product_name,
             "quantity": self.quantity,
-            "price": float(self.price),
+            "price": self.price,
             "type": self.type or "",
             "expiry_date": self.expiry_date.isoformat() if self.expiry_date else "",
-            "warranty_period": self.warranty_period if self.warranty_period is not None else None,
-            "author": self.author if self.author else "",
-            "pages": self.pages if self.pages is not None else None,
+            "warranty_period": self.warranty_period,
+            "author": self.author or "",
+            "pages": self.pages,
+            "created_by": self.created_by
         }
-
 
 class RoleEnum(str, Enum):
     ADMIN = "admin"
