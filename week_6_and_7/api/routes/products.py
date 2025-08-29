@@ -1,10 +1,9 @@
 """Product-related API routes."""
 
 from typing import Type, Any, Tuple
-from flask import Blueprint, request, jsonify, Response
+from flask import Blueprint, request, jsonify, Response, g
 from sqlalchemy.exc import SQLAlchemyError
 from pydantic import ValidationError, BaseModel
-
 from ..db import db
 from ..models import Product
 from ..schemas import (
@@ -16,7 +15,7 @@ from ..schemas import (
     ProductResponse,
 )
 
-from ..utils.security import jwt_required
+from ..utils.security import jwt_required, roles_required
 
 api_bp: Blueprint = Blueprint("api", __name__, url_prefix="/api")
 
@@ -55,6 +54,7 @@ def get_product(product_id: int) -> Tuple[Response, int]:
 
 
 @api_bp.route("/products", methods=["POST"])
+@roles_required('manager', 'admin')
 @jwt_required
 def create_product() -> Tuple[Response, int]:
     """Create a new product."""
@@ -73,6 +73,7 @@ def create_product() -> Tuple[Response, int]:
         return jsonify({"error": "Product with this product_id already exists"}), 409
 
     product: Product = Product(**product_in.model_dump())
+    product.created_by = g.current_user_id
     db.session.add(product)
     try:
         db.session.commit()
@@ -85,6 +86,7 @@ def create_product() -> Tuple[Response, int]:
 
 @api_bp.route("/products/<int:product_id>", methods=["PUT"])
 @jwt_required
+@roles_required('manager', 'admin')
 def update_product(product_id: int) -> Tuple[Response, int]:
     """Update an existing product."""
     data: dict[str, Any] | None = request.get_json(force=True, silent=True)
@@ -94,6 +96,10 @@ def update_product(product_id: int) -> Tuple[Response, int]:
     product: Product | None = Product.query.filter_by(product_id=product_id).first()
     if not product:
         return jsonify({"error": "Product not found"}), 404
+    
+    if g.current_user_role == "manager" and product.created_by != g.current_user_id:
+        return jsonify({"error": "Forbidden: Managers can only update their own products"}), 403
+
 
     try:
         update_in: ProductUpdate = ProductUpdate(**data)
@@ -115,6 +121,7 @@ def update_product(product_id: int) -> Tuple[Response, int]:
 
 @api_bp.route("/products/<int:product_id>", methods=["DELETE"])
 @jwt_required
+@roles_required('admin')
 def delete_product(product_id: int) -> Tuple[str | Response, int]:
     """Delete a product."""
     product: Product | None = Product.query.filter_by(product_id=product_id).first()
