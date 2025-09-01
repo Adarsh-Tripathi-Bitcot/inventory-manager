@@ -148,3 +148,71 @@ week_6/tests/
 - Validated request/response schemas with Pydantic
 - Ensured seed data scripts work as expected
 - High test coverage and reliable TDD workflow for backend API
+
+
+
+# Testing & TDD Practices – Week 7
+
+## Overview
+Week 7 emphasizes **security testing** and API validation:
+- JWT login & authentication
+- Role-based access control
+- Integration with existing Flask + PostgreSQL endpoints
+- Unit tests for security utilities
+- Coverage >95% for security-related modules
+
+---
+
+## Test Suite Structure
+```
+tests/
+├── test_security.py # Login, JWT, role checks
+├── test_routes.py # Protected endpoints
+├── test_models.py # User & Product models
+├── conftest.py # Fixtures for client, test DB, users
+```
+
+---
+
+## Key Practices
+
+### 1. JWT Authentication
+- Tested login with valid/invalid credentials
+- Verified token issuance and expiration
+- Ensured token is required for protected endpoints
+
+### 2. Role-based Access
+- `manager` can create/update products
+- `staff` can only read products
+- Tests assert **403 Forbidden** for unauthorized roles
+
+### 3. Mocking External Dependencies
+- Used `pytest-mock` to mock DB operations for security tests
+- Ensured test isolation without touching production DB
+
+### 4. Integration Tests
+- Verified full request–response cycle with Flask test client
+- Checked HTTP status codes, response payloads, and DB effects
+
+---
+
+## Tools
+| Tool            | Purpose                        |
+|-----------------|--------------------------------|
+| Flask           | API framework                  |
+| SQLAlchemy      | ORM for PostgreSQL             |
+| Alembic         | Database migrations            |
+| pytest          | Test framework                 |
+| pytest-mock     | Mocking & patching             |
+| pytest-cov      | Coverage reporting             |
+| pydantic        | Validation of request payloads |
+| bcrypt          | Password hashing               |
+
+---
+
+## Achievements
+- JWT authentication implemented and tested
+- Role-based restrictions validated
+- CRUD endpoints secured
+- High test coverage (>95%) for security and API routes
+- End-to-end secure API workflow validated

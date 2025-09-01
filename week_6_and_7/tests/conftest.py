@@ -1,4 +1,4 @@
-"""Pytest fixtures for Week 6 Inventory API tests."""
+"""Pytest fixtures for Week 6–7 Inventory API tests (patched for JWT/RBAC)."""
 
 import pytest
 from flask import Flask
@@ -16,8 +16,9 @@ def sample_product() -> dict:
         "price": 25.5,
         "type": "book",
         "author": "Author A",
-        "pages": 123
+        "pages": 123,
     }
+
 
 @pytest.fixture()
 def app() -> Flask:
@@ -43,7 +44,30 @@ def db(app: Flask):
 
 @pytest.fixture(autouse=True)
 def clear_db(db):
-    """Clear Product table before each test."""
-    from week_6_and_7.api.models import Product
+    """Clear Product and User tables before each test."""
+    from week_6_and_7.api.models import Product, User
     db.session.query(Product).delete()
+    db.session.query(User).delete()
     db.session.commit()
+
+
+# -----------------------
+# Auth helper fixtures
+# -----------------------
+
+@pytest.fixture
+def make_auth_headers(client):
+    """
+    Helper to create a user (by role) and return Authorization headers with a fresh access token.
+    Usage:
+        headers = make_auth_headers(role="manager", username="u1", password="pw")
+    """
+    def _make(role: str = "manager", username: str = "user_mgr", password: str = "pw"):
+        # Register (idempotent)
+        client.post("/auth/register", json={"username": username, "password": password, "role": role})
+        # Login to get token
+        resp = client.post("/auth/login", json={"username": username, "password": password})
+        assert resp.status_code == 200, f"Login failed for role={role}: {resp.json}"
+        token = resp.json["access_token"]
+        return {"Authorization": f"Bearer {token}"}
+    return _make
