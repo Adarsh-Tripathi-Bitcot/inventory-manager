@@ -507,3 +507,72 @@ week_6/
 - Environment-based configuration for DB credentials
 - Integration tests covering all routes using Flask test client
 - Clean, modular, and production-ready code structure
+
+
+
+# Overview – Week 7
+
+# Inventory Manager – Authentication & Security
+
+Week 7 extends the Flask API with **secure authentication and role-based access control**.
+
+---
+
+## Goals
+- Implement **JWT authentication** for API endpoints.
+- Add **role-based access control** (manager/staff).
+- Secure product CRUD operations.
+- Write tests to cover **security functionality**.
+
+---
+
+## Key Concepts Practiced
+- JWT encoding, decoding, and verification.
+- Password hashing with `bcrypt`.
+- Role-based access control logic.
+- Secure API endpoint implementation.
+- Testing login, token validation, and role restrictions.
+
+
+## Project Structure (Week-7)
+```
+└── week_6_and_7
+    ├── api
+      │   ├── app.py
+      │   ├── config.py
+      │   ├── db.py
+      │   ├── __init__.py
+      │   ├── models.py
+      │   ├── request_model.py
+      │   ├── response_model.py
+      │   ├── routes
+      │   │   ├── auth_routes.py
+      │   │   ├── __init__.py
+      │   │   ├── products.py
+      │   ├── schemas.py
+      │   ├── seed.py
+      │   └── utils
+      │       ├── __init__.py
+      │       └── security.py
+   ├── data
+   │   └── products.csv
+   ├── errors.log
+   ├── __init__.py
+   ├── migrations
+   │   ├── alembic.ini
+   │   ├── env.py
+   │   ├── README
+   │   ├── script.py.mako
+   │   └── versions
+   ├── requirements.txt
+   ├── tests
+   │   ├── conftest.py
+   │   ├── __init__.py
+   │   ├── test_app.py
+   │   ├── test_config.py
+   │   ├── test_models.py
+   │   ├── test_request_response_models.py
+   │   ├── test_routes.py
+   │   ├── test_security.py
+   │   └── test_seed.py
+  ```
