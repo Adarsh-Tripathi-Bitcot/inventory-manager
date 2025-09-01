@@ -543,19 +543,16 @@ Week 7 extends the Flask API with **secure authentication and role-based access 
       │   ├── db.py
       │   ├── __init__.py
       │   ├── models.py
-      │   ├── __pycache__
       │   ├── request_model.py
       │   ├── response_model.py
       │   ├── routes
       │   │   ├── auth_routes.py
       │   │   ├── __init__.py
       │   │   ├── products.py
-      │   │   └── __pycache__
       │   ├── schemas.py
       │   ├── seed.py
       │   └── utils
       │       ├── __init__.py
-      │       ├── __pycache__
       │       └── security.py
    ├── data
    │   └── products.csv
@@ -564,19 +561,13 @@ Week 7 extends the Flask API with **secure authentication and role-based access 
    ├── migrations
    │   ├── alembic.ini
    │   ├── env.py
-   │   ├── __pycache__
-   │   │   └── env.cpython-310.pyc
    │   ├── README
    │   ├── script.py.mako
    │   └── versions
-   │       └── __pycache__
-   ├── __pycache__
-   │   └── __init__.cpython-310.pyc
    ├── requirements.txt
    ├── tests
    │   ├── conftest.py
    │   ├── __init__.py
-   │   ├── __pycache__
    │   ├── test_app.py
    │   ├── test_config.py
    │   ├── test_models.py
