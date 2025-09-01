@@ -17,11 +17,14 @@ A Python-based inventory management tool built as a **6-week learning project**,
 - Request/response validation with Pydantic
 - Seed scripts for initial DB population
 - Full test suite with >95% coverage including API endpoints
+- JWT-based authentication
+- Role-based authorization (manager/staff)
+- Secure CRUD operations for products
 
 
 
 ## Learning Journey
-- **[Week 1–6 Overview](docs/INDEX.md)**
+- **[Week 1–7 Overview](docs/INDEX.md)**
 - **[Architecture](docs/ARCHITECTURE.md)**
 - **[Setup & Installation](docs/SETUP.md)**
 - **[Testing Guide](docs/TESTING.md)**
@@ -36,7 +39,7 @@ inventory-manager/
 ├── week_3/
 ├── week_5/
 ├── tests/
-├── week_6/
+├── week_6_and_7/
 ├── requirements.txt
 ├── pytest.ini
 └── README.md

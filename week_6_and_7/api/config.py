@@ -4,26 +4,41 @@ import os
 from dotenv import load_dotenv
 from typing import Type, Optional
 
-load_dotenv()  # Load .env file in project root
+# Load .env (project root) if present
+load_dotenv()
 
 
 class BaseConfig:
-    """Base configuration shared across all environments."""
+    """Base configuration shared across all environments.
+
+    Attributes:
+        SQLALCHEMY_TRACK_MODIFICATIONS (bool): SQLAlchemy modification tracking flag.
+        JWT_SECRET_KEY (str): Secret key for JWT encoding/decoding.
+    """
 
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "fallback_secret_for_dev")
 
 
 class DevConfig(BaseConfig):
-    """Development configuration using DATABASE_URL from environment."""
+    """Development configuration using DATABASE_URL from environment.
+
+    Attributes:
+        SQLALCHEMY_DATABASE_URI (Optional[str]): Database URI loaded from env.
+    """
 
     SQLALCHEMY_DATABASE_URI: Optional[str] = os.getenv("DATABASE_URL")
 
 
 class TestConfig(BaseConfig):
-    """Testing configuration with fallback local PostgreSQL test DB."""
+    """Testing configuration with fallback local SQLite / Postgres test DB.
+
+    Attributes:
+        SQLALCHEMY_DATABASE_URI (str): Database URI for testing.
+    """
 
     SQLALCHEMY_DATABASE_URI: str = os.getenv("TEST_DATABASE_URL") or (
-        "postgresql://postgres:postgres@localhost/inventory_test_db"
+        "sqlite:///:memory:"
     )
 
 

@@ -103,3 +103,53 @@ flask seed-db
 API will be available at:
 
 http://127.0.0.1:5000/api/products
+
+
+
+# Setup & Installation – Week 7
+
+## Requirements
+- Python 3.10+
+- Flask
+- SQLAlchemy
+- Alembic
+- psycopg2-binary
+- Pydantic v2
+- bcrypt
+- Pytest, pytest-mock, pytest-cov
+- Black & Ruff
+
+---
+
+## 1. Clone the Repository
+```bash
+git clone <your-repo-url>
+cd inventory-manager
+
+## 2. Create and Activate Virtual Environment
+
+Linux/macOS:
+
+python -m venv venv
+source venv/bin/activate
+
+
+Windows:
+
+python -m venv venv
+venv\Scripts\activate
+
+## 3. Install Dependencies
+pip install -r requirements.txt
+
+## 4. Run Flask + PostgreSQL API (Week 7)
+export FLASK_APP=api.app:create_app
+flask run
+
+## 5. Initialize Database
+flask db init       # first time only
+flask db migrate -m "Initial migration with User table"
+flask db upgrade
+
+## 6. Seed Data
+flask seed-db

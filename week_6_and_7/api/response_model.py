@@ -12,8 +12,8 @@ class ProductResponse(BaseModel):
 
     product_id: int = Field(..., gt=0)
     product_name: str
-    quantity: int = Field(..., ge=0)
-    price: float = Field(..., gt=0)
+    quantity: int
+    price: float 
     type: Optional[str] = Field("", description="food | electronic | book | ''")
     expiry_date: Optional[date] = None
     warranty_period: Optional[int] = None
