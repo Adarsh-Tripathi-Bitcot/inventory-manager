@@ -57,21 +57,6 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # Register pgvector adapter for psycopg2 / psycopg to make SQLAlchemy
-    # recommended if you installed `pgvector`.
-    try:
-        # psycopg2 registration helper
-        from pgvector.psycopg2 import register_vector as _register_vector
-        from sqlalchemy import event
-
-        @event.listens_for(db.engine, "connect")
-        def _on_connect(dbapi_connection, connection_record):
-            # arrays=True allows vector arrays usage if needed
-            _register_vector(dbapi_connection, arrays=True)
-    except Exception:
-        # ignore if pgvector not installed or adapter can't be registered
-        pass
-
     # import models after DB init so Flask-Migrate detects them
     with app.app_context():
         from . import models  # noqa: F401

@@ -59,37 +59,6 @@ def calculate_cost(prompt_tokens: int, completion_tokens: int) -> float:
     # $0.0005 per 1K input tokens, $0.0015 per 1K output tokens
     return (prompt_tokens * 0.0005 + completion_tokens * 0.0015) / 1000
 
-
-# def main():
-#     user_input = input("Enter your query: ")
-
-#     messages = [
-#         ChatMessage(role="system", content="You are a helpful assistant."),
-#         ChatMessage(role="user", content=user_input)
-#     ]
-
-#     client = get_openai_client()
-
-#     response = client.chat.completions.create(
-#         model="gpt-4o",
-#         messages=[m.model_dump() for m in messages],
-#         temperature=0.7
-#     )
-
-#     reply = response.choices[0].message.content
-#     prompt_tokens = response.usage.prompt_tokens
-#     completion_tokens = response.usage.completion_tokens
-#     total_tokens = response.usage.total_tokens
-#     cost = calculate_cost(prompt_tokens, completion_tokens)
-
-#     print("\n--- Response ---")
-#     print(reply)
-#     print("\n--- Token Usage ---")
-#     print(f"Prompt Tokens: {prompt_tokens}")
-#     print(f"Completion Tokens: {completion_tokens}")
-#     print(f"Total Tokens: {total_tokens}")
-#     print(f"Estimated Cost: ${cost:.6f}")
-
 def main():
     client = get_openai_client()
 

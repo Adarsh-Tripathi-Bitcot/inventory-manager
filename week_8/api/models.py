@@ -8,6 +8,7 @@ from sqlalchemy.orm import relationship
 from enum import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
 from pgvector.sqlalchemy import Vector
+from .constants import EMBEDDING_DIM
 
 class Product(db.Model):
     """SQLAlchemy model representing a product in the inventory."""
@@ -76,27 +77,14 @@ class User(db.Model):
         return f"<User {self.username}>"
     
 
+class SentenceEmbedding(db.Model):
+    """Store generic sentence embeddings for semantic search."""
 
-class ProductEmbedding(db.Model):
-    """Embedding record for a product (stores text + embedding vector).
+    __tablename__ = "sentence_embeddings"
 
-    The embedding column uses pgvector.Vector with the default dimension for
-    text-embedding-3-small (1536).
-    """
-    __tablename__ = "product_embeddings"
-
-    id: int = db.Column(db.Integer, primary_key=True, nullable=False)
-    product_id: int = db.Column(db.Integer, ForeignKey("products.product_id"), nullable=False)
-    content: str = db.Column(db.Text, nullable=False)  # textual context used for embedding
-    embedding = db.Column(Vector(1536), nullable=False)  # 1536-dim vectors for text-embedding-3-small
-
-    product = relationship("Product", backref="embeddings")
-
-    __table_args__ = (
-        # you can add indexes for faster neighbor search if desired
-        # Example (Postgres-specific index hints) left to DB admin / migration:
-        # Index("ix_product_embeddings_embedding", db.text("embedding"), postgresql_using="ivfflat"),
-    )
+    id: int = db.Column(db.Integer, primary_key=True)
+    content: str = db.Column(db.Text, nullable=False)
+    embedding = db.Column(Vector(1536), nullable=False)
 
     def __repr__(self) -> str:
-        return f"<ProductEmbedding id={self.id} product_id={self.product_id}>"
+        return f"<SentenceEmbedding id={self.id} content='{self.content[:20]}...'>"

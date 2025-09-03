@@ -3,9 +3,9 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 
-from api.db import db
-from api.models import User
-from api.utils.security import create_access_token, create_refresh_token, decode_access_token
+from ..db import db
+from ..models import User
+from ..utils.security import create_access_token, create_refresh_token, decode_access_token
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
