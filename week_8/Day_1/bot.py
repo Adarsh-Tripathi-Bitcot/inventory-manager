@@ -4,6 +4,9 @@ import tiktoken
 from typing import List
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
+from api.constants import OPENAI_CHAT_MODEL
+
+
 
 load_dotenv()
 
@@ -23,7 +26,7 @@ def get_openai_client() -> openai.OpenAI:
     return openai.OpenAI(api_key=api_key)
 
 
-def count_tokens(messages: List[ChatMessage], model: str = "gpt-4o") -> int:
+def count_tokens(messages: List[ChatMessage], model: str = OPENAI_CHAT_MODEL) -> int:
     """
     Accurately count tokens in a list of chat messages using tiktoken.
 
