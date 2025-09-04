@@ -10,3 +10,5 @@ OPENAI_CHAT_MODEL: str = "gpt-4o-mini"
 
 # Embedding dimension for text-embedding-3-small
 EMBEDDING_DIM: int = 1536
+
+OPENAI_TEMPERATURE: int = 0.3
