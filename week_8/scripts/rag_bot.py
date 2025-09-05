@@ -73,7 +73,7 @@ def main():
     rag_chain = build_rag_chain(vector_store)
 
     # Example query
-    question = "What is the price of Macbook?"
+    question = "Quantity of onion?"
     logger.info(f"Asking RAG chain: {question}")
     answer = rag_chain.invoke(question)
 
