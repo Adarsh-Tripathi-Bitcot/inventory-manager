@@ -599,6 +599,8 @@ week_8/
 │   │   └── chat.py                   # <- NEW: chat blueprint with /chat/inventory
 │   └── utils/
 │       └── embeddings.py             # helper for OpenAI embeddings (ingest)
+├── prompts/
+│   ├── system_prompt.py 
 ├── scripts/
 │   ├── data_loader.py                # loads product data for ingestion
 │   ├── embed_sentences.py            # generate embeddings for chunks & write to DB

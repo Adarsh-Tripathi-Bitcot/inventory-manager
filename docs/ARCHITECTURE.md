@@ -130,7 +130,9 @@ week_8/
 │   │   ├── products.py
 │   │   └── chat.py             
 │   └── utils/
-│       └── embeddings.py             
+│       └── embeddings.py
+├── prompts/
+│   ├── system_prompt.py              
 ├── scripts/
 │   ├── data_loader.py               
 │   ├── embed_sentences.py          
