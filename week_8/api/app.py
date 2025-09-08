@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from .db import db, migrate
 from .routes import api_bp, auth_bp
+from .routes.chat import chat_bp 
 from .config import get_config
 from .seed import seed_db
 
@@ -64,6 +65,7 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
     # register blueprints
     app.register_blueprint(api_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(chat_bp)  
 
     # CLI command seed-db
     app.cli.add_command(seed_db)

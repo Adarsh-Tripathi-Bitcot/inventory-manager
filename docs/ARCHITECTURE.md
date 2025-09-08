@@ -117,6 +117,28 @@ inventory-manager/
    │   ├── test_routes.py
    │   ├── test_security.py
    │   └── test_seed.py
+week_8/
+├── api/
+│   ├── app.py                        
+│   ├── config.py
+│   ├── constants.py
+│   ├── db.py
+│   ├── models.py                    
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── auth_routes.py
+│   │   ├── products.py
+│   │   └── chat.py             
+│   └── utils/
+│       └── embeddings.py
+├── prompts/
+│   ├── system_prompt.py              
+├── scripts/
+│   ├── data_loader.py               
+│   ├── embed_sentences.py          
+│   ├── ingest_embeddings.py         
+│   └── rag_bot.py                
+└── migrations/                       
 ```
 
 
@@ -184,7 +206,7 @@ inventory-manager/
 4. **HTTP Response** → JSON with proper status code
 
 
-# Project Architecture – Week 7
+# Project Architecture – Week 6 and 7
 
 ## Overview
 Week 7 of the **Inventory Manager** project focuses on implementing **authentication, authorization, and role-based access control** for the Flask API.  
@@ -238,3 +260,35 @@ Key highlights:
 - **SRP & OCP** – Each module handles a single responsibility and can be extended without modification.
 - **Loose Coupling** – Security logic in `utils/security.py` independent from routes.
 - **Testable** – Routes, security utils, and DB operations are unit-tested and mockable.
+
+
+# Project Architecture – Week 8
+
+**Goal:** Transition the inventory project to the AI stack: learn LLMs & embeddings, build a retrieval-augmented generation (RAG) pipeline, ingest product text into `pgvector`, and expose a JWT-protected `/chat/inventory` endpoint that answers natural-language questions about products.
+
+---
+
+**High level:**  
+- A RAG-powered inventory chatbot: product data is embedded into a persistent vector store (Postgres + `pgvector`), LangChain PGVector retriever fetches relevant product context, and a LangChain chain (LCEL) composes retriever → prompt → LLM to produce answers.  
+- The chain is exposed via a new Flask blueprint: `POST /chat/inventory`. The endpoint is JWT-protected.
+
+**Key design choices:**
+- Vector store: `pgvector` extension in PostgreSQL (persistent embeddings).  
+- Embeddings: OpenAI embedding model (configurable via env).  
+- LLM: OpenAI Chat model via LangChain (`ChatOpenAI`).  
+- Chain composition: LangChain Expression Language (LCEL) with `RunnablePassthrough` for the question.  
+- Startup behavior: vector store and chain loaded once at Flask startup (to avoid rebuilding per request).  
+- Ingestion scripts are separate from runtime; embeddings are generated once by scripts.
+
+---
+
+## Index
+- [Project Overview & Architecture](#project-overview--architecture)  
+- [Project structure (week_8)](#project-structure-week_8)  
+- [Environment & Required Config](#environment--required-config)  
+- [Setup & Local Run Steps](#setup--local-run-steps)  
+- [Scripts (ingest / embeddings / rag)](#scripts-ingest--embeddings--rag)  
+- [API: Chat Blueprint & Endpoint](#api-chat-blueprint--endpoint)   
+- [Checklist (Week 8 deliverables)](#checklist-week-8-deliverables)  
+
+---

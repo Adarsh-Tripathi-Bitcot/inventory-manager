@@ -1,16 +1,20 @@
 # week_8/scripts/rag_bot.py
 import logging
+import os
+from dotenv import load_dotenv
+
 from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
 from langchain_community.vectorstores.pgvector import PGVector
-from dotenv import load_dotenv
-import os
-from langchain_openai import OpenAIEmbeddings
 
-# from week_8.scripts.data_loader import load_products
-from week_8.api.constants import OPENAI_CHAT_MODEL, OPENAI_TEMPERATURE, OPENAI_EMBEDDING_MODEL
+from week_8.api.constants import (
+    OPENAI_CHAT_MODEL,
+    OPENAI_TEMPERATURE,
+    OPENAI_EMBEDDING_MODEL,
+)
+from week_8.prompts.system_prompt import RAG_PROMPT_TEMPLATE
 
 load_dotenv()
 
@@ -39,19 +43,12 @@ def load_vector_store(collection_name: str = "product_embeddings") -> PGVector:
 
 def build_rag_chain(vector_store: PGVector):
     """
-    Build a simple RAG pipeline: retriever → prompt → LLM → output parser
+    Build a RAG pipeline using retriever, system prompt, LLM, and output parser.
     """
     retriever = vector_store.as_retriever()
 
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            (
-                "system",
-                "You are a helpful assistant. Use the provided product context to answer the user's question.",
-            ),
-            ("human", "Context:\n{context}\n\nQuestion: {question}"),
-        ]
-    )
+    # Load prompt from system_prompt.py
+    prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
 
     llm = ChatOpenAI(model=OPENAI_CHAT_MODEL, temperature=OPENAI_TEMPERATURE)
 
@@ -65,7 +62,6 @@ def build_rag_chain(vector_store: PGVector):
 
 
 def main():
-    # Do NOT generate embeddings here anymore
     logger.info("Loading existing embeddings from vector DB...")
     vector_store = load_vector_store()
 
@@ -73,7 +69,7 @@ def main():
     rag_chain = build_rag_chain(vector_store)
 
     # Example query
-    question = "Quantity of onion?"
+    question = "Which is the cheapest electronic product?"
     logger.info(f"Asking RAG chain: {question}")
     answer = rag_chain.invoke(question)
 

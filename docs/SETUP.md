@@ -153,3 +153,54 @@ flask db upgrade
 
 ## 6. Seed Data
 flask seed-db
+
+```
+
+
+## Environment & required config (examples)
+
+- Set these in your .env or environment before running:
+```
+    DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+    OPENAI_API_KEY=sk-...
+    OPENAI_CHAT_MODEL=gpt-4o-mini      # or gpt-3.5-turbo, etc (configurable)
+    OPENAI_EMBEDDING_MODEL=text-embedding-3-small
+    OPENAI_TEMPERATURE=0.0
+    JWT_SECRET_KEY=supersecret
+```
+
+- week_8/api/constants.py contains model/embedding name constants used by scripts and rag_bot.
+
+## Setup & local run steps
+
+- Create & activate virtualenv, install dependencies (existing requirements.txt):
+```
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+- Ensure PostgreSQL is running and pgvector extension is enabled on your DB. (If using Docker, enable pgvector in the container.)
+
+- Run migrations:
+```
+export FLASK_APP=week_8.api.app:create_app
+flask db upgrade
+```
+
+- Ingest product text & embeddings (run ingestion scripts once):
+- Generate text chunks and embeddings, store into sentence_embeddings table
+```
+python -m week_8.scripts.embed_sentences
+python -m week_8.scripts.ingest_embeddings
+```
+- Run  rag-cahin using command
+```
+python -m week_8.scripts.rag_bot
+```
+
+- Start the Flask app:
+```
+export FLASK_APP=api.app:create_app
+flask run
+```
