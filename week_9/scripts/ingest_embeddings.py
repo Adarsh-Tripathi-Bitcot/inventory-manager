@@ -1,15 +1,15 @@
 import logging
 from typing import List, Dict
-from langchain_openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores.pgvector import PGVector
 from langchain_core.documents import Document
 from dotenv import load_dotenv
 import os
 import psycopg2
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from ..api.utils.hf_embeddings import MODEL_NAME
 
 from week_8.api.constants import (
-    OPENAI_EMBEDDING_MODEL,
     CHUNK_SIZE,
     CHUNK_OVERLAP,
 )
@@ -21,6 +21,8 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+
+HF_COLLECTION_NAME = "product_embeddings_hf"
 
 def get_already_embedded_product_ids() -> set:
     """
@@ -57,7 +59,7 @@ def embed_and_store(products: List[Dict]) -> PGVector:
         raise ValueError("DATABASE_URL not found in environment variables")
 
     logger.info("Initializing OpenAI embeddings...")
-    embeddings = OpenAIEmbeddings(model=OPENAI_EMBEDDING_MODEL)
+    embeddings = HuggingFaceEmbeddings(model_name=MODEL_NAME)
 
     logger.info("Splitting product data into chunks...")
     text_splitter = RecursiveCharacterTextSplitter(
@@ -81,7 +83,7 @@ def embed_and_store(products: List[Dict]) -> PGVector:
         documents=documents,
         embedding=embeddings,
         connection_string=db_url,
-        collection_name="product_embeddings",
+        collection_name=HF_COLLECTION_NAME,
     )
 
     logger.info("Embeddings successfully stored in pgvector.")

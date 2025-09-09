@@ -14,7 +14,7 @@ from typing import List
 from api.app import create_app
 from api.db import db
 from api.models import SentenceEmbedding
-from api.utils.embeddings import embed_texts
+from api.utils.hf_embeddings import embed_texts_hf as embed_texts
 
 # Batch size for embeddings
 BATCH_SIZE = int(os.getenv("EMBED_BATCH_SIZE", "32"))
