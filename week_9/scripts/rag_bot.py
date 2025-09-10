@@ -4,17 +4,18 @@ import psycopg2
 from dotenv import load_dotenv
 
 from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
 from langchain_community.vectorstores.pgvector import PGVector
 
-from week_8.api.constants import (
+from week_9.api.utils.hf_embeddings import HFEmbeddingWrapper
+from week_9.api.constants import (
     OPENAI_CHAT_MODEL,
     OPENAI_TEMPERATURE,
-    OPENAI_EMBEDDING_MODEL,
+    HF_COLLECTION_NAME,
 )
-from week_8.prompts.system_prompt import RAG_PROMPT_TEMPLATE
+from week_9.prompts.system_prompt import RAG_PROMPT_TEMPLATE
 
 load_dotenv()
 
@@ -30,19 +31,26 @@ def get_db_connection():
     return psycopg2.connect(db_url)
 
 
-def load_vector_store(collection_name: str = "product_embeddings") -> PGVector:
-    """Load existing PGVector embeddings from the database."""
+def load_vector_store(collection_name: str = HF_COLLECTION_NAME) -> PGVector:
+    """
+    Load an existing PGVector vector store with Hugging Face embeddings.
+
+    Args:
+        collection_name (str): Name of the PGVector collection.
+
+    Returns:
+        PGVector: Vector store object.
+    """
     db_url = os.getenv("DATABASE_URL")
     if not db_url:
         raise ValueError("DATABASE_URL not found in environment variables")
 
     logger.info(f"Loading vector store from collection '{collection_name}'...")
-    embeddings = OpenAIEmbeddings(model=OPENAI_EMBEDDING_MODEL)
 
     vector_store = PGVector(
         collection_name=collection_name,
         connection_string=db_url,
-        embedding_function=embeddings,  # Required for similarity search
+        embedding_function=HFEmbeddingWrapper(),  # wrapper implements embed_query/documents
     )
     return vector_store
 
@@ -50,6 +58,7 @@ def load_vector_store(collection_name: str = "product_embeddings") -> PGVector:
 def build_rag_chain(vector_store: PGVector):
     """Build a RAG pipeline using retriever, system prompt, LLM, and output parser."""
     retriever = vector_store.as_retriever()
+
     prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
     llm = ChatOpenAI(model=OPENAI_CHAT_MODEL, temperature=OPENAI_TEMPERATURE)
 

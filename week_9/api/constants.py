@@ -1,22 +1,18 @@
-# week_8/api/constants.py
+"""Constants used across the Week-8 and Week-9 embedding pipeline."""
 
-"""Constants used across the Week-8 embedding pipeline."""
-
-# Embedding model
+# --- OpenAI Config ---
 OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
-
-# Chat model (will be used later for RAG)
 OPENAI_CHAT_MODEL: str = "gpt-4o-mini"
-
-# Embedding dimension for text-embedding-3-small
 EMBEDDING_DIM: int = 1536
-
-# Model temperature
 OPENAI_TEMPERATURE: float = 0.3
 
-# Chunking configuration
+# --- Hugging Face Config ---
+HF_EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
+
+# --- Chunking configuration ---
 CHUNK_SIZE: int = 300
 CHUNK_OVERLAP: int = 50
 
-# Vector store collection
-COLLECTION_NAME = "product_embeddings"
+# --- Vector store collections ---
+COLLECTION_NAME: str = "product_embeddings"
+HF_COLLECTION_NAME: str = "product_embeddings_hf"
