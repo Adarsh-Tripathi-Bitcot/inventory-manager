@@ -8,15 +8,14 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
 from langchain_community.vectorstores.pgvector import PGVector
-from week_9.api.utils.hf_embeddings import MODEL_NAME as hf_model
-from langchain_community.embeddings.huggingface import HuggingFaceEmbeddings
 
-
-from week_8.api.constants import (
+from week_9.api.utils.hf_embeddings import HFEmbeddingWrapper
+from week_9.api.constants import (
     OPENAI_CHAT_MODEL,
     OPENAI_TEMPERATURE,
+    HF_COLLECTION_NAME,
 )
-from week_8.prompts.system_prompt import RAG_PROMPT_TEMPLATE
+from week_9.prompts.system_prompt import RAG_PROMPT_TEMPLATE
 
 load_dotenv()
 
@@ -32,9 +31,9 @@ def get_db_connection():
     return psycopg2.connect(db_url)
 
 
-def load_vector_store(collection_name: str = "langchain_pg_embedding") -> PGVector:
+def load_vector_store(collection_name: str = HF_COLLECTION_NAME) -> PGVector:
     """
-    Load or create a PGVector vector store using Hugging Face embeddings.
+    Load an existing PGVector vector store with Hugging Face embeddings.
 
     Args:
         collection_name (str): Name of the PGVector collection.
@@ -48,27 +47,17 @@ def load_vector_store(collection_name: str = "langchain_pg_embedding") -> PGVect
 
     logger.info(f"Loading vector store from collection '{collection_name}'...")
 
-    # Initialize Hugging Face embeddings
-    embeddings = HuggingFaceEmbeddings(model_name=hf_model)
-
-    # Connect to PGVector
     vector_store = PGVector(
         collection_name=collection_name,
         connection_string=db_url,
-        embedding_function=embeddings,  # Required for similarity search
+        embedding_function=HFEmbeddingWrapper(),  # wrapper implements embed_query/documents
     )
-
     return vector_store
 
 
 def build_rag_chain(vector_store: PGVector):
     """Build a RAG pipeline using retriever, system prompt, LLM, and output parser."""
-    # Explicitly get the Hugging Face embeddings instance
-    query_embeddings = HuggingFaceEmbeddings(model_name=hf_model)
-
-    # Get retriever and assign the query embedding function
     retriever = vector_store.as_retriever()
-    retriever.search_kwargs["embedding_function"] = query_embeddings  # ✅ critical
 
     prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
     llm = ChatOpenAI(model=OPENAI_CHAT_MODEL, temperature=OPENAI_TEMPERATURE)
