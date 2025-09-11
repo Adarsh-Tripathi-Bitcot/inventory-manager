@@ -8,12 +8,8 @@ logger = logging.getLogger(__name__)
 
 chat_bp = Blueprint("chat", __name__, url_prefix="/chat")
 
-# Load vector store once
+# Load vector store once at startup
 _vector_store = load_vector_store(collection_name="product_embeddings_hf")
-
-# Prebuild chains at startup
-_openai_chain = build_rag_chain(_vector_store, use_ollama=False)
-_ollama_chain = build_rag_chain(_vector_store, use_ollama=True)
 
 
 @chat_bp.route("/inventory", methods=["POST"])
@@ -21,12 +17,6 @@ _ollama_chain = build_rag_chain(_vector_store, use_ollama=True)
 def chat_inventory():
     """
     Answer inventory-related questions using RAG and store/cache responses.
-
-    Request JSON:
-    {
-        "question": "Price of strawberries",
-        "use_ollama": "true"   # optional; defaults to OpenAI if not provided
-    }
     """
     data = request.get_json(force=True, silent=True)
     if not data or "question" not in data:
@@ -36,8 +26,9 @@ def chat_inventory():
     if not question:
         return jsonify({"error": "Question cannot be empty"}), 400
 
-    # Decide which LLM to use
+    # Decide which LLM to use (factory driven)
     use_ollama = str(data.get("use_ollama", "false")).lower() == "true"
+    provider = "ollama" if use_ollama else "openai"
     model_name = "ollama-rag" if use_ollama else "openai-rag"
 
     try:
@@ -46,8 +37,8 @@ def chat_inventory():
         if cached:
             return jsonify({"answer": cached, "model": model_name}), 200
 
-        # 2. Use preloaded chain
-        chain = _ollama_chain if use_ollama else _openai_chain
+        # 2. Build chain on demand via factory (lightweight)
+        chain = build_rag_chain(_vector_store, provider=provider)
 
         answer: str = chain.invoke(question)
 

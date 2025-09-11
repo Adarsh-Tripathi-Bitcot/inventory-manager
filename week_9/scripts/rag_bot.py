@@ -9,20 +9,9 @@ from langchain.schema import StrOutputParser
 from langchain_community.vectorstores.pgvector import PGVector
 from langchain_community.embeddings.huggingface import HuggingFaceEmbeddings
 
-from week_9.api.constants import (
-    OPENAI_CHAT_MODEL,
-    OPENAI_TEMPERATURE,
-)
+from week_9.api.constants import HF_EMBEDDING_MODEL
 from week_9.prompts.system_prompt import RAG_PROMPT_TEMPLATE
-
-from week_9.api.constants import (
-    HF_EMBEDDING_MODEL,
-    OLLAMA_MODEL,
-    OLLAMA_TEMPERATURE,
-)
-
-from week_9.api.utils.ollama_llm import get_ollama_llm
-from langchain_openai import ChatOpenAI
+from week_9.api.utils.llm_factory import get_llm  # ✅ NEW
 
 load_dotenv()
 
@@ -41,12 +30,6 @@ def get_db_connection():
 def load_vector_store(collection_name: str = "langchain_pg_embedding") -> PGVector:
     """
     Load or create a PGVector vector store using Hugging Face embeddings.
-
-    Args:
-        collection_name (str): Name of the PGVector collection.
-
-    Returns:
-        PGVector: Vector store object.
     """
     db_url = os.getenv("DATABASE_URL")
     if not db_url:
@@ -59,36 +42,25 @@ def load_vector_store(collection_name: str = "langchain_pg_embedding") -> PGVect
     vector_store = PGVector(
         collection_name=collection_name,
         connection_string=db_url,
-        embedding_function=embeddings,  # Required for similarity search
+        embedding_function=embeddings,
     )
-
     return vector_store
 
 
-def build_rag_chain(vector_store: PGVector, use_ollama: bool = False):
+def build_rag_chain(vector_store: PGVector, provider: str = "openai"):
     """
     Build a RAG pipeline using retriever, system prompt, and LLM.
 
     Args:
         vector_store (PGVector): Vector store for retrieval.
-        use_ollama (bool): If True, use Ollama LLM instead of OpenAI.
+        provider (str): 'openai' or 'ollama'
 
     Returns:
         chain: Configured RAG chain.
     """
-    # Retriever
     retriever = vector_store.as_retriever()
-
-    # Prompt
     prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
-
-    # Choose LLM
-    if use_ollama:
-        logger.info("Using Ollama model for RAG pipeline...")
-        llm = get_ollama_llm(model=OLLAMA_MODEL, temperature=OLLAMA_TEMPERATURE)
-    else:
-        logger.info("Using OpenAI model for RAG pipeline...")
-        llm = ChatOpenAI(model=OPENAI_CHAT_MODEL, temperature=OPENAI_TEMPERATURE)
+    llm = get_llm(provider=provider)
 
     chain = (
         {"context": retriever, "question": RunnablePassthrough()}
@@ -105,18 +77,15 @@ def get_or_cache_answer(rag_chain, question: str) -> str:
     cur = conn.cursor()
 
     try:
-        # 1. Check cache
         cur.execute("SELECT answer FROM llm_cache WHERE question = %s;", (question,))
         row = cur.fetchone()
         if row:
             logger.info("Cache hit for question: %s", question)
             return row[0]
 
-        # 2. Not cached → run chain
         logger.info("Cache miss → querying LLM for: %s", question)
         answer = rag_chain.invoke(question)
 
-        # 3. Insert into cache
         cur.execute(
             "INSERT INTO llm_cache (question, answer) VALUES (%s, %s);",
             (question, answer),
