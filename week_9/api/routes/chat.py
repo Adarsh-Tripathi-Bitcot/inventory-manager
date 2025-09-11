@@ -8,15 +8,16 @@ logger = logging.getLogger(__name__)
 
 chat_bp = Blueprint("chat", __name__, url_prefix="/chat")
 
-# Load RAG chain once at startup (avoid rebuilding on every request)
+# Load vector store once at startup
 _vector_store = load_vector_store(collection_name="product_embeddings_hf")
-_rag_chain = build_rag_chain(_vector_store)
 
 
 @chat_bp.route("/inventory", methods=["POST"])
 @jwt_required
 def chat_inventory():
-    """Answer inventory-related questions using RAG and store/cache responses."""
+    """
+    Answer inventory-related questions using RAG and store/cache responses.
+    """
     data = request.get_json(force=True, silent=True)
     if not data or "question" not in data:
         return jsonify({"error": "Missing 'question' in request body"}), 400
@@ -25,19 +26,27 @@ def chat_inventory():
     if not question:
         return jsonify({"error": "Question cannot be empty"}), 400
 
+    # Decide which LLM to use (factory driven)
+    use_ollama = str(data.get("use_ollama", "false")).lower() == "true"
+    provider = "ollama" if use_ollama else "openai"
+    model_name = "ollama-rag" if use_ollama else "openai-rag"
+
     try:
-        # First check cache
-        cached = get_cached_response(model_name="openai-rag", prompt=question)
+        # 1. Check cache
+        cached = get_cached_response(model_name=model_name, prompt=question)
         if cached:
-            return jsonify({"answer": cached}), 200
+            return jsonify({"answer": cached, "model": model_name}), 200
 
-        # Run RAG chain
-        answer: str = _rag_chain.invoke(question)
+        # 2. Build chain on demand via factory (lightweight)
+        chain = build_rag_chain(_vector_store, provider=provider)
 
-        # Store in cache
-        set_cached_response(model_name="openai-rag", prompt=question, response=answer)
+        answer: str = chain.invoke(question)
 
-        return jsonify({"answer": answer}), 200
+        # 3. Store in cache
+        set_cached_response(model_name=model_name, prompt=question, response=answer)
+
+        return jsonify({"answer": answer, "model": model_name}), 200
+
     except Exception as e:
         logger.error(f"Error processing question '{question}': {str(e)}")
         return jsonify({"error": str(e)}), 500

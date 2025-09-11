@@ -16,3 +16,8 @@ CHUNK_OVERLAP: int = 50
 # --- Vector store collections ---
 COLLECTION_NAME: str = "product_embeddings"
 HF_COLLECTION_NAME: str = "product_embeddings_hf"
+
+
+# New for Ollama
+OLLAMA_MODEL = "llama3"
+OLLAMA_TEMPERATURE = 0.0
