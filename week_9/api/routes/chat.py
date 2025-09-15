@@ -6,16 +6,24 @@ from typing import List
 from langchain_core.documents import Document
 from langchain_core.runnables import RunnableLambda
 import logging
-import re
 
 logger = logging.getLogger(__name__)
 
 chat_bp = Blueprint("chat", __name__, url_prefix="/chat")
 
+
 class CombinedRetriever:
     """Simple retriever that merges user-specific docs and global product docs."""
 
-    def __init__(self, user_vs, product_vs, user_id: int, k_user: int = 5, k_product: int = 3, min_relevance: float = 0.5):
+    def __init__(
+        self,
+        user_vs,
+        product_vs,
+        user_id: int,
+        k_user: int = 5,
+        k_product: int = 3,
+        min_relevance: float = 0.5,
+    ):
         self.user_vs = user_vs
         self.product_vs = product_vs
         self.user_id = user_id
@@ -28,10 +36,16 @@ class CombinedRetriever:
         user_docs: List[Document] = []
         try:
             if hasattr(self.user_vs, "similarity_search_with_relevance_scores"):
-                pairs = self.user_vs.similarity_search_with_relevance_scores(query, k=self.k_user, filter={"user_id": self.user_id})
-                user_docs = [doc for doc, score in pairs if (score or 0) >= self.min_relevance]
+                pairs = self.user_vs.similarity_search_with_relevance_scores(
+                    query, k=self.k_user, filter={"user_id": self.user_id}
+                )
+                user_docs = [
+                    doc for doc, score in pairs if (score or 0) >= self.min_relevance
+                ]
             else:
-                user_docs = self.user_vs.similarity_search(query, k=self.k_user, filter={"user_id": self.user_id})
+                user_docs = self.user_vs.similarity_search(
+                    query, k=self.k_user, filter={"user_id": self.user_id}
+                )
         except Exception:
             user_docs = []
 
@@ -39,10 +53,16 @@ class CombinedRetriever:
         product_docs: List[Document] = []
         try:
             if hasattr(self.product_vs, "similarity_search_with_relevance_scores"):
-                pairs = self.product_vs.similarity_search_with_relevance_scores(query, k=self.k_product)
-                product_docs = [doc for doc, score in pairs if (score or 0) >= self.min_relevance]
+                pairs = self.product_vs.similarity_search_with_relevance_scores(
+                    query, k=self.k_product
+                )
+                product_docs = [
+                    doc for doc, score in pairs if (score or 0) >= self.min_relevance
+                ]
             else:
-                product_docs = self.product_vs.similarity_search(query, k=self.k_product)
+                product_docs = self.product_vs.similarity_search(
+                    query, k=self.k_product
+                )
         except Exception:
             product_docs = []
 
@@ -70,21 +90,20 @@ def chat_inventory():
     model_name = "ollama-rag" if use_ollama else "openai-rag"
 
     try:
-        # Friendly greeting handling without invoking LLM
-        if re.fullmatch(r"\s*(hi|hello|hey|hola|namaste|good (morning|afternoon|evening))\W*", question, re.IGNORECASE):
-            return jsonify({
-                "answer": "Hello! I can answer questions strictly based on your uploaded documents and product data. Ask me anything specific.",
-                "model": "system"
-            }), 200
         # Identify current user
         user = get_current_user()
         if user is None:
             return jsonify({"error": "Unauthorized"}), 401
 
         # 1. Check cache (tenant-scoped)
-        cached = get_cached_response(model_name=model_name, prompt=question, user_id=int(user.id))
+        cached = get_cached_response(
+            model_name=model_name, prompt=question, user_id=int(user.id)
+        )
         if cached:
-            return jsonify({"answer": cached, "model": model_name, "cached": True}), 200
+            return (
+                jsonify({"answer": cached, "model": model_name, "cached": True}),
+                200,
+            )
 
         # 2. Build vector stores lazily (avoid env access at import time)
         product_vs = load_vector_store(collection_name="product_embeddings_hf")
@@ -98,7 +117,9 @@ def chat_inventory():
         answer: str = chain.invoke(question)
 
         # 3. Store in cache (tenant-scoped)
-        set_cached_response(model_name=model_name, prompt=question, response=answer, user_id=int(user.id))
+        set_cached_response(
+            model_name=model_name, prompt=question, response=answer, user_id=int(user.id)
+        )
 
         return jsonify({"answer": answer, "model": model_name}), 200
 
