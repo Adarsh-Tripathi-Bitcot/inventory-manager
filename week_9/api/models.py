@@ -3,7 +3,7 @@
 from datetime import date, datetime, timezone
 from typing import Optional
 from .db import db
-from sqlalchemy import CheckConstraint, ForeignKey, Column, Integer, Text, String, DateTime
+from sqlalchemy import CheckConstraint, ForeignKey, Column, Integer, Text, String, DateTime, UniqueConstraint
 from sqlalchemy.orm import relationship
 from enum import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -89,20 +89,37 @@ class SentenceEmbedding(db.Model):
         return f"<SentenceEmbedding id={self.id} content='{self.content[:20]}...'>"
     
 
+class Document(db.Model):
+    """Tenant-owned uploaded document."""
+
+    __tablename__ = "documents"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    filename = Column(String(512), nullable=True)
+    content_type = Column(String(128), nullable=True)
+    text = Column(Text, nullable=False)
+    meta_data = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
 class LLMCache(db.Model):
-    """SQLAlchemy model to store cached LLM responses."""
+    """Cached LLM responses, tenant-aware via user_id."""
 
     __tablename__ = "llm_cache"
+    __table_args__ = (
+        UniqueConstraint("model_name", "prompt", "user_id", name="uq_llmcache_model_prompt_user"),
+    )
 
     id = Column(Integer, primary_key=True)
     model_name = Column(String(50), nullable=False)
-    prompt = Column(Text, nullable=False, unique=True)
+    prompt = Column(Text, nullable=False)
     response = Column(Text, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     expiration_time = Column(DateTime(timezone=True), nullable=True)
 
     def is_expired(self) -> bool:
-        """Check if the cached response has expired."""
         if self.expiration_time is None:
             return False
         return datetime.now(timezone.utc) > self.expiration_time

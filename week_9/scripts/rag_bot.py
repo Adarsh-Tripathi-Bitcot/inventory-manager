@@ -3,7 +3,7 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 
-from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
 from langchain_community.vectorstores.pgvector import PGVector
@@ -11,7 +11,7 @@ from langchain_community.embeddings.huggingface import HuggingFaceEmbeddings
 
 from week_9.api.constants import HF_EMBEDDING_MODEL
 from week_9.prompts.system_prompt import RAG_PROMPT_TEMPLATE
-from week_9.api.utils.llm_factory import get_llm  # ✅ NEW
+from week_9.api.utils.llm_factory import get_llm  
 
 load_dotenv()
 
@@ -47,18 +47,28 @@ def load_vector_store(collection_name: str = "langchain_pg_embedding") -> PGVect
     return vector_store
 
 
-def build_rag_chain(vector_store: PGVector, provider: str = "openai"):
+def build_rag_chain(vector_store_or_retriever, provider: str = "openai"):
     """
     Build a RAG pipeline using retriever, system prompt, and LLM.
 
     Args:
-        vector_store (PGVector): Vector store for retrieval.
+        vector_store_or_retriever: PGVector vector store or an already-configured retriever.
         provider (str): 'openai' or 'ollama'
 
     Returns:
         chain: Configured RAG chain.
     """
-    retriever = vector_store.as_retriever()
+    # Accept three cases:
+    # 1) Retriever-like (has get_relevant_documents) → wrap as RunnableLambda
+    # 2) Vectorstore-like (has as_retriever) → convert
+    # 3) Already a Runnable (fallback) → use directly
+    if hasattr(vector_store_or_retriever, "get_relevant_documents"):
+        retriever = RunnableLambda(lambda q: vector_store_or_retriever.get_relevant_documents(q))
+    else:
+        if hasattr(vector_store_or_retriever, "as_retriever"):
+            retriever = vector_store_or_retriever.as_retriever()
+        else:
+            retriever = vector_store_or_retriever
     prompt = ChatPromptTemplate.from_template(RAG_PROMPT_TEMPLATE)
     llm = get_llm(provider=provider)
 

@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from .db import db, migrate
 from .routes import api_bp, auth_bp
 from .routes.chat import chat_bp
+from .routes.documents import bp as documents_bp
 from .seed import seed_db
 
 # Load environment variables from .env
@@ -60,11 +61,14 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
     # import models after DB init so Flask-Migrate detects them
     with app.app_context():
         from . import models  # noqa: F401
+        # Auto-create tables if they don't exist (dev convenience when migrations unavailable)
+        db.create_all()
 
     # register blueprints
     app.register_blueprint(api_bp)
     app.register_blueprint(auth_bp)
-    app.register_blueprint(chat_bp)  
+    app.register_blueprint(chat_bp)
+    app.register_blueprint(documents_bp)
 
     # CLI command seed-db
     app.cli.add_command(seed_db)
