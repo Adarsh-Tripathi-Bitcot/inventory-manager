@@ -6,6 +6,7 @@ from typing import List
 from langchain_core.documents import Document
 from langchain_core.runnables import RunnableLambda
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -14,29 +15,38 @@ chat_bp = Blueprint("chat", __name__, url_prefix="/chat")
 class CombinedRetriever:
     """Simple retriever that merges user-specific docs and global product docs."""
 
-    def __init__(self, user_vs, product_vs, user_id: int, k_user: int = 5, k_product: int = 3):
+    def __init__(self, user_vs, product_vs, user_id: int, k_user: int = 5, k_product: int = 3, min_relevance: float = 0.5):
         self.user_vs = user_vs
         self.product_vs = product_vs
         self.user_id = user_id
         self.k_user = k_user
         self.k_product = k_product
+        self.min_relevance = min_relevance
 
     def get_relevant_documents(self, query: str) -> List[Document]:
-        # Retrieve user docs filtered by user_id metadata
-        user_docs = []
+        # Retrieve user docs filtered by user_id metadata with relevance scores
+        user_docs: List[Document] = []
         try:
-            user_docs = self.user_vs.similarity_search(query, k=self.k_user, filter={"user_id": self.user_id})
+            if hasattr(self.user_vs, "similarity_search_with_relevance_scores"):
+                pairs = self.user_vs.similarity_search_with_relevance_scores(query, k=self.k_user, filter={"user_id": self.user_id})
+                user_docs = [doc for doc, score in pairs if (score or 0) >= self.min_relevance]
+            else:
+                user_docs = self.user_vs.similarity_search(query, k=self.k_user, filter={"user_id": self.user_id})
         except Exception:
             user_docs = []
 
         # Retrieve global product docs (no user filter; products are pre-ingested)
-        product_docs = []
+        product_docs: List[Document] = []
         try:
-            product_docs = self.product_vs.similarity_search(query, k=self.k_product)
+            if hasattr(self.product_vs, "similarity_search_with_relevance_scores"):
+                pairs = self.product_vs.similarity_search_with_relevance_scores(query, k=self.k_product)
+                product_docs = [doc for doc, score in pairs if (score or 0) >= self.min_relevance]
+            else:
+                product_docs = self.product_vs.similarity_search(query, k=self.k_product)
         except Exception:
             product_docs = []
 
-        # Naive merge; could de-duplicate via metadata or text
+        # Merge and return
         return user_docs + product_docs
 
 
@@ -60,6 +70,12 @@ def chat_inventory():
     model_name = "ollama-rag" if use_ollama else "openai-rag"
 
     try:
+        # Friendly greeting handling without invoking LLM
+        if re.fullmatch(r"\s*(hi|hello|hey|hola|namaste|good (morning|afternoon|evening))\W*", question, re.IGNORECASE):
+            return jsonify({
+                "answer": "Hello! I can answer questions strictly based on your uploaded documents and product data. Ask me anything specific.",
+                "model": "system"
+            }), 200
         # Identify current user
         user = get_current_user()
         if user is None:
