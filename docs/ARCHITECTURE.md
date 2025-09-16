@@ -8,6 +8,8 @@ The **Inventory Manager** project follows a progressive design:
 4. Week 5 – RESTful API using Flask.
 5. Week 6 – Flask API integrated with PostgreSQL for persistent storage.
 6. Week 7 – Focuses on implementing **authentication, authorization, and role-based access control** for the Flask API
+7. Week 8 – Introduction to LLMs, Embeddings, and RAG
+8. Week 9: Production-Ready AI & Advanced Features
 ---
 
 ## Folder Structure
@@ -138,7 +140,69 @@ week_8/
 │   ├── embed_sentences.py          
 │   ├── ingest_embeddings.py         
 │   └── rag_bot.py                
-└── migrations/                       
+└── migrations/  
+week_9/
+├── api
+│   ├── app.py
+│   ├── config.py
+│   ├── constants.py
+│   ├── db.py
+│   ├── __init__.py
+│   ├── models.py
+│   ├── request_model.py
+│   ├── response_model.py
+│   ├── routes
+│   │   ├── auth_routes.py
+│   │   ├── chat.py
+│   │   ├── documents.py
+│   │   ├── __init__.py
+│   │   ├── products.py
+│   ├── schemas.py
+│   ├── seed.py
+│   └── utils
+│       ├── cache.py
+│       ├── embeddings.py
+│       ├── hf_embeddings.py
+│       ├── __init__.py
+│       ├── llm_factory.py
+│       ├── ollama_llm.py
+│       └── security.py
+├── data
+│   └── products.csv
+├── Day_1
+│   ├── bot_langchain.py
+│   ├── bot.py
+│       ├── bot.cpython-310.pyc
+│       └── bot_langchain.cpython-310.pyc
+├── errors.log
+├── __init__.py
+├── migrations
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── README
+│   ├── script.py.mako
+├── prompts
+│   └── system_prompt.py
+├── README.md
+├── report.txt
+├── requirements.txt
+├── scripts
+│   ├── data_loader.py
+│   ├── embed_sentences.py
+│   ├── ingest_embeddings.py
+│   ├── __init__.py
+│   └── rag_bot.py
+├── tests
+│   ├── conftest.py
+│   ├── __init__.py
+│   ├── test_app.py
+│   ├── test_config.py
+│   ├── test_models.py
+│   ├── test_request_response_models.py
+│   ├── test_routes.py
+│   ├── test_security.py
+│   └── test_seed.py
+└── venv
 ```
 
 
@@ -292,3 +356,45 @@ Key highlights:
 - [Checklist (Week 8 deliverables)](#checklist-week-8-deliverables)  
 
 ---
+
+
+# Project Architecture – Week 9
+
+## Overview
+The **Inventory Manager** project has evolved into a multi-tenant, model-agnostic **RAG application**.  
+Key highlights this week:
+- **Multi-Tenancy**: Each user can upload private documents; isolation enforced at the DB and retriever level.
+- **Model Flexibility**: Switch between OpenAI API and local open-source models (via Ollama / Hugging Face).
+- **Caching Layer**: SQLAlchemy-based cache to reduce redundant LLM calls.
+
+---
+---
+
+## Core Components Added in Week-9
+
+| Component                    | Purpose                                                |
+|------------------------------|--------------------------------------------------------|
+| **LLM Cache Table**          | Stores question → answer with expiry timestamps.       |
+| **User-Scoped Vector Store** | Each embedding row tagged with `user_id`.              |
+| **Retriever Filter**         | Ensures queries only return vectors matching `user_id`.|
+| **Model Toggle**             | Environment variable to choose OpenAI vs. local model. |
+
+---
+
+## Data Flow (Chat Endpoint)
+
+1. **User Authenticates** → JWT with `user_id`.
+2. **Document Upload** → Chunks + embeddings stored with `user_id`.
+3. **Chat Request** →  
+   - Check cache.  
+   - If miss → retrieve vectors where `user_id` matches.  
+   - Run LLM (OpenAI or local).  
+   - Store answer in cache.
+
+---
+
+## Design Principles
+- **Data Isolation** – no cross-user leakage.
+- **Configurable Models** – easily swap embedding/LLM backends.
+- **Caching** – latency + cost savings.
+- **Security First** – JWT validation at all sensitive endpoints.

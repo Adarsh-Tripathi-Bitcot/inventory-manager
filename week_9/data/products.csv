@@ -1,0 +1,9 @@
+product_id,product_name,quantity,price,type,expiry_date,warranty_period,author,pages
+201,Strawberries,12,3.0,food,2025-10-05,,,
+202,Blueberries,abc,2.5,food,2025-10-10,,,
+203,Watermelon,-5,4.0,food,2025-09-20,,,
+204,Peach,20,2.75,food,2025-09-25,,,
+205,Pineapple,7,-2.5,food,2025-10-01,,,
+206,Smartphone,3,70000,electronic,,18,,
+207,Data Science,8,450,book,,,Alice,250
+208,Desk,10,3000,,,,,

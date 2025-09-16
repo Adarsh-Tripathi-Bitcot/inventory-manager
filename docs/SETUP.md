@@ -204,3 +204,66 @@ python -m week_8.scripts.rag_bot
 export FLASK_APP=api.app:create_app
 flask run
 ```
+
+
+
+# Setup Guide – Week 9
+
+## 1. Clone & Enter Project
+```bash
+git clone <your-repo-url>
+cd inventory-manager/week_9
+
+
+## 2. Create Virtual Environment
+python3 -m venv venv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
+
+## 3. Install Dependencies
+pip install -r requirements.txt
+
+
+## 4. Environment Variables
+DATABASE_URL=postgresql://user:pass@localhost/db_name
+OPENAI_API_KEY=sk-...
+MODEL_BACKEND=openai    
+CACHE_TTL=3600          
+JWT_SECRET=supersecret
+
+
+## 5. Database Migrations
+flask db upgrade
+
+## 6. Embedding Ingestion
+python -m week_9.scripts.ingest_embeddings
+
+
+## 7.1 Install & Run Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+## 7.2 Pull a Model
+ollama pull llama3
+
+
+## 7.3 Test Locally
+ollama run llama3 "Hello, how are you?"
+
+
+## 8. Run the App
+flask run 
+
+## 9. Using Ollama with the Chat Endpoint
+curl -X POST http://127.0.0.1:5000/chat/inventory \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer <your-JWT>" \
+-d '{
+  "question": "Summarize the uploaded product documents.",
+  "use_ollama": true
+}'
+
+## 10. Upload & Chat Workflow
+
+POST /documents/upload (JWT required) to upload a file.
+POST /chat/inventory (JWT required) to ask a question.
+Add "use_ollama": true in the JSON to switch to the local model.
