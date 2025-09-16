@@ -20,11 +20,13 @@ A Python-based inventory management tool built as a **6-week learning project**,
 - JWT-based authentication
 - Role-based authorization (manager/staff)
 - Secure CRUD operations for products
-
+- Implemented RAG-based chat system with PostgreSQL vector store (PGVector) for multi-tenant document retrieval.
+- Added OpenAI vs. Ollama integration — switchable via use_ollama flag to run locally or in the cloud.
+- Enhanced Flask API endpoints (/chat/inventory, /api/documents/upload) with JWT authentication and caching for tenant-scoped responses.
 
 
 ## Learning Journey
-- **[Week 1–8 Overview](docs/INDEX.md)**
+- **[Week 1–9 Overview](docs/INDEX.md)**
 - **[Architecture](docs/ARCHITECTURE.md)**
 - **[Setup & Installation](docs/SETUP.md)**
 - **[Testing Guide](docs/TESTING.md)**
@@ -41,6 +43,7 @@ inventory-manager/
 ├── tests/
 ├── week_6_and_7/
 ├── week_8/
+├── week_9/
 ├── requirements.txt
 ├── pytest.ini
 └── README.md

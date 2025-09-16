@@ -674,3 +674,88 @@ build_rag_chain(vector_store: PGVector) — constructs the LCEL chain:
 - Endpoint executes RAG chain and returns JSON answer.
 
 - PR created and tested locally.
+
+
+# Overview – Week 9
+
+
+## Project structure (week_9) — important files
+
+```
+week_8/
+├── api
+│   ├── app.py
+│   ├── config.py
+│   ├── constants.py
+│   ├── db.py
+│   ├── __init__.py
+│   ├── models.py
+│   ├── request_model.py
+│   ├── response_model.py
+│   ├── routes
+│   │   ├── auth_routes.py
+│   │   ├── chat.py
+│   │   ├── documents.py
+│   │   ├── __init__.py
+│   │   ├── products.py
+│   ├── schemas.py
+│   ├── seed.py
+│   └── utils
+│       ├── cache.py
+│       ├── embeddings.py
+│       ├── hf_embeddings.py
+│       ├── __init__.py
+│       ├── llm_factory.py
+│       ├── ollama_llm.py
+│       └── security.py
+├── data
+│   └── products.csv
+├── Day_1
+│   ├── bot_langchain.py
+│   ├── bot.py
+│       ├── bot.cpython-310.pyc
+│       └── bot_langchain.cpython-310.pyc
+├── errors.log
+├── __init__.py
+├── migrations
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── README
+│   ├── script.py.mako
+├── prompts
+│   └── system_prompt.py
+├── README.md
+├── report.txt
+├── requirements.txt
+├── scripts
+│   ├── data_loader.py
+│   ├── embed_sentences.py
+│   ├── ingest_embeddings.py
+│   ├── __init__.py
+│   └── rag_bot.py
+├── tests
+│   ├── conftest.py
+│   ├── __init__.py
+│   ├── test_app.py
+│   ├── test_config.py
+│   ├── test_models.py
+│   ├── test_request_response_models.py
+│   ├── test_routes.py
+│   ├── test_security.py
+│   └── test_seed.py
+└── venv
+```
+
+# Inventory Manager – Week 9 Index
+
+## What’s New in Week-9
+- **Multi-Tenancy**: Per-user document uploads, per-user retrieval.
+- **LLM Caching**: Avoid repeated expensive calls.
+- **Open-Source Models**: Hugging Face embeddings, Ollama for LLM.
+- **Security Review**: Strict filtering by `user_id` and JWT claims.
+
+---
+
+## Quick Links
+- [Architecture Overview](ARCHITECTURE.md)
+- [Setup Guide](SETUP.md)
