@@ -8,6 +8,7 @@ import jwt
 from flask import current_app, request, jsonify, g
 from pydantic import BaseModel
 from ..models import User
+from ..db import db
 
 # Default configuration values (used if app config does not provide them)
 _DEFAULT_ALGORITHM = "HS256"
@@ -137,3 +138,19 @@ def roles_required(*allowed_roles: str) -> Callable:
 
     return decorator
 
+def get_current_user():
+    """Return the current `User` or None. Uses g.current_user_id if set, else falls back to flask_jwt_extended identity if available."""
+    try:
+        user_id = getattr(g, "current_user_id", None)
+        if user_id is None:
+            try:
+                from flask_jwt_extended import get_jwt_identity  # local import to avoid hard dep
+                uid = get_jwt_identity()
+                if uid is None:
+                    return None
+                user_id = int(uid)
+            except Exception:
+                return None
+        return db.session.get(User, int(user_id))
+    except Exception:
+        return None
